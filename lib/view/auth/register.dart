@@ -8,7 +8,7 @@ import 'package:homemade/res/imagestring.dart';
 import 'package:homemade/res/size.dart';
 import 'package:homemade/res/stringapi.dart';
 import 'package:homemade/res/textStyle.dart';
-import 'package:homemade/server/auth/authServer.dart';
+import 'package:homemade/server/GeneralAPI.dart';
 import 'package:homemade/widget/RoundedBorderButton.dart';
 import 'package:homemade/widget/TextFieldWIthImage.dart';
 import 'package:homemade/widget/errorMessage.dart';
@@ -18,6 +18,7 @@ import 'package:transparent_image/transparent_image.dart';
 import 'package:dio/dio.dart' as dio;
 
 import '../pageselection.dart';
+import '../wrapper.dart';
 import 'login.dart';
 
 class RegisterView extends StatefulWidget {
@@ -46,12 +47,17 @@ class _RegisterViewState extends State<RegisterView> {
 
   String errorMessage = "";
 
-  AuthServer auth = AuthServer();
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+
+    firstNameController = TextEditingController();
+    lastNameController = TextEditingController();
+    phoneNumberController = TextEditingController();
+    emailAddressController = TextEditingController();
+    passwordController = TextEditingController();
 
     emailAddressFocus.addListener(() {
       print("emailaddressFocus");
@@ -63,8 +69,7 @@ class _RegisterViewState extends State<RegisterView> {
       setState(() {});
     });
 
-    emailAddressController = TextEditingController();
-    passwordController = TextEditingController();
+
   }
 
   @override
@@ -152,7 +157,7 @@ class _RegisterViewState extends State<RegisterView> {
                   obscureText: true,
                   textInputType: TextInputType.text,
                   action: TextInputAction.next,
-                  hint: "...........",
+                  hint: "",
                   label: "Password",
                   imagePath: logoImage,
                 ),
@@ -308,11 +313,6 @@ class _RegisterViewState extends State<RegisterView> {
 
   _validateForm() {
 
-    Navigator.of(context).pushReplacement(PageTransition(
-        child: PageSelection(), type: PageTransitionType.downToUp));
-
-
-    return;
     setState(() {
       serverError = false;
       errorMessage="";
@@ -334,15 +334,15 @@ class _RegisterViewState extends State<RegisterView> {
 
 
       dio.FormData data = dio.FormData.fromMap({
-        "first_name": emailAddressController.text,
-        "last_name": emailAddressController.text,
-        "phone_number": emailAddressController.text,
+        "first_name": firstNameController.text,
+        "last_name": lastNameController.text,
+        "phone_number": phoneNumberController.text,
         "email": emailAddressController.text,
         "password": passwordController.text
       });
 
-      dio.Response response = await auth.postWithoutTokenAndStoreUserData(
-          url: LOGIN_URL, data: data);
+      dio.Response response = await API(_scaffoldKey).postWithoutTokenAndStoreUserData(
+          url: REGISTER_URL, data: data,storeUserData: true);
 
 
       setState(() {
@@ -350,14 +350,12 @@ class _RegisterViewState extends State<RegisterView> {
       });
 
       if (response != null) {
-        if(response.statusCode==200)
-          CustomSnackBar.SnackBar_3Success(_scaffoldKey,
-              title: "Comming Soon! Login Success", leadingIcon: Icons.warning);
-        else
-          DebugError.CheckMap(response.data, _scaffoldKey);
-      } else {
-        CustomSnackBar.SnackBar_3Error(_scaffoldKey,
-            title: "Response Error!", leadingIcon: Icons.error_outline);
+        Navigator.of(context).popUntil((route)=>route.isFirst);
+        Navigator.of(context).pushReplacement(PageTransition(
+            child: WrapperStream(), type: PageTransitionType.downToUp));
+
+
+        return;
       }
     } catch (e) {
       print(e);

@@ -8,7 +8,7 @@ import 'package:homemade/res/imagestring.dart';
 import 'package:homemade/res/size.dart';
 import 'package:homemade/res/stringapi.dart';
 import 'package:homemade/res/textStyle.dart';
-import 'package:homemade/server/auth/authServer.dart';
+import 'package:homemade/server/GeneralAPI.dart';
 import 'package:homemade/view/auth/register.dart';
 import 'package:homemade/widget/RoundedBorderButton.dart';
 import 'package:homemade/widget/TextFieldWIthImage.dart';
@@ -17,6 +17,8 @@ import 'package:homemade/widget/loading.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:dio/dio.dart' as dio;
+
+import '../wrapper.dart';
 
 class LoginView extends StatefulWidget {
   @override
@@ -38,12 +40,13 @@ class _LoginViewState extends State<LoginView> {
 
   String errorMessage = "";
 
-  AuthServer auth = AuthServer();
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    emailaddressController = TextEditingController();
+    passwordController = TextEditingController();
 
     emailaddressFocus.addListener(() {
       print("emailaddressFocus");
@@ -55,8 +58,7 @@ class _LoginViewState extends State<LoginView> {
       setState(() {});
     });
 
-    emailaddressController = TextEditingController();
-    passwordController = TextEditingController();
+
   }
 
   @override
@@ -144,7 +146,7 @@ class _LoginViewState extends State<LoginView> {
                   obscureText: true,
                   textInputType: TextInputType.emailAddress,
                   action: TextInputAction.done,
-                  hint: "...........",
+                  hint: "",
                   label: "Password",
                   imagePath: logoImage,
                 ),
@@ -229,22 +231,17 @@ class _LoginViewState extends State<LoginView> {
         "password": passwordController.text
       });
 
-      dio.Response response = await auth.postWithoutTokenAndStoreUserData(
-          url: LOGIN_URL, data: data);
+      dio.Response response = await API(_scaffoldKey).postWithoutTokenAndStoreUserData(
+          url: LOGIN_URL, data: data,storeUserData: true);
 
       setState(() {
         submit = false;
       });
 
       if (response != null) {
-        if(response.statusCode==200)
-        CustomSnackBar.SnackBar_3Success(_scaffoldKey,
-            title: "Comming Soon! Login Success", leadingIcon: Icons.warning);
-        else
-          DebugError.CheckMap(response.data, _scaffoldKey);
-      } else {
-        CustomSnackBar.SnackBar_3Error(_scaffoldKey,
-            title: "Response Error!", leadingIcon: Icons.error_outline);
+        Navigator.of(context).popUntil((route)=>route.isFirst);
+        Navigator.of(context).pushReplacement(PageTransition(
+            child: WrapperStream(), type: PageTransitionType.downToUp));
       }
     } catch (e) {
       print(e);

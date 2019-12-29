@@ -1,14 +1,19 @@
 import 'dart:convert';
 
-import 'package:homemade/server/GeneralAPI.dart';
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
+
 
 class RefreshToken{
 
 
-  static checkTokenIsValid(http.Response responseHttp) async{
-    if (responseHttp.statusCode == 401) {
-      String decode = jsonDecode(responseHttp.body)['detail'];
+  static checkTokenIsValid(Response response) async{
+    if (response.statusCode == 401) {
+      String decode;
+//      try {
+//        decode = jsonDecode(response.data)['detail'];
+//      }catch(e){
+        decode = response.data['detail'];
+//      }
       print(decode);
       if (false)
         return await refreshToken();
@@ -27,7 +32,7 @@ class RefreshToken{
 //        'password': password
 //      };
 
-      GeneralAPI auth = GeneralAPI();
+//      GeneralAPI auth = GeneralAPI();
 
 //      http.Response response = await auth.postWithoutToken(url: loginURL,body: body);
 

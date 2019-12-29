@@ -22,7 +22,7 @@ class SplashScreen extends StatelessWidget {
               image: AssetImage(logoImage)),
 //          Image.asset(logoImage,width: MySize.getLongestSide(100),height: MySize.getLongestSide(100),fit: BoxFit.contain,),
 //          SizedBox(height: MySize.getLongestSide(10),),
-          Text("find good food",style: TextStyles.textStyleLightItalic(fontSize: 20),)
+          Text("Homely meal is a great deal",style: TextStyles.textStyleLightItalic(fontSize: 20),)
         ],
       )),
     );

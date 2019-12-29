@@ -30,7 +30,7 @@ class WalkThrough extends StatelessWidget {
 
 //          SizedBox(height: MySize.getLongestSide(10),),
               Text(
-                "We will find he best!".toUpperCase(),
+                "We will find the best!".toUpperCase(),
                 style: TextStyles.textStyleBold(fontSize: 24),
               ),
 
@@ -43,7 +43,7 @@ class WalkThrough extends StatelessWidget {
                       maxWidth: MySize.of(context).fitWidth(62), minWidth: 0),
                   child: Center(
                     child: Text(
-                      "find the nearest chief and homemade food with the best taste that make your life healthier!"
+                      "Connecting you with the nearest chef for a healthier lifestyle!"
                           .toLowerCase(),
                       textAlign: TextAlign.center,
                       style: TextStyles.textStyleNormal(),
