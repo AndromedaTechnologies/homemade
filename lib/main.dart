@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:homemade/model/loginModel.dart';
 import 'package:homemade/view/landing/splash.dart';
 import 'package:homemade/view/landing/walkthrought.dart';
 import 'package:homemade/view/wrapper.dart';
 
+import 'model/UserModel.dart';
 import 'res/globalClass.dart';
 
 void main() => runApp(MyApp());
@@ -30,8 +32,8 @@ class _MyAppState extends State<MyApp> {
   }
 
   _checkLoginUser() async {
-    String token;
-//    await UserModel.getToken();
+    String token =
+    await UserModel.getToken();
     print(token);
     if (token != null) {
       setState(() {

@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:homemade/model/UserModel.dart';
+import 'package:homemade/model/loginModel.dart';
 import 'package:homemade/res/color.dart';
 import 'package:homemade/res/imagestring.dart';
 import 'package:homemade/res/size.dart';
 import 'package:homemade/res/textStyle.dart';
+import 'package:homemade/stream/UserProvider.dart';
+import 'package:homemade/stream/UserProviderInstance.dart';
+import 'package:homemade/view/auth/login.dart';
 import 'package:homemade/view/myaccount///register.dart';
 import 'package:homemade/view/myaccount/myprofile.dart';
 import 'package:homemade/widget/ImageInitials.dart';
+import 'package:homemade/widget/RoundedBorderButton.dart';
 import 'package:page_transition/page_transition.dart';
 
 class ProfileView extends StatefulWidget {
@@ -14,14 +20,16 @@ class ProfileView extends StatefulWidget {
 }
 
 class _ProfileViewState extends State<ProfileView> {
+
   List<ProfileData> profileDataList = [
-    ProfileData(text: "Chef Settings", image: chefImage, isWhite: false),
-    ProfileData(text: "My Dishes", image: dinnerImage, isWhite: true),
-    ProfileData(text: "My Profile", image: manUserImage, isWhite: false),
-    ProfileData(text: "My Orders", image: shoppingImage, isWhite: true),
-    ProfileData(text: "Settings", image: settingsImage, isWhite: false),
-    ProfileData(text: "Sign Out", image: logoutImage, isWhite: true),
+    ProfileData(text: "Chef Settings", image: chefImage, ),
+    ProfileData(text: "My Dishes", image: dinnerImage, ),
+    ProfileData(text: "My Profile", image: manUserImage,),
+    ProfileData(text: "My Orders", image: shoppingImage,),
+    ProfileData(text: "Settings", image: settingsImage, ),
+    ProfileData(text: "Sign Out", image: logoutImage),
   ];
+
 
   @override
   Widget build(BuildContext context) {
@@ -67,20 +75,53 @@ class _ProfileViewState extends State<ProfileView> {
           SizedBox(
             height: 20,
           ),
-          ListView.builder(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              shrinkWrap: true,
-              itemCount: profileDataList.length,
-              physics: ScrollPhysics(),
-              itemBuilder: (context, index) {
-                return _row(profileDataList[index]
-                  ..onTap = () {
-                    _pageNavigationSelection(index);
-                  });
-              })
+          _listOfAction(),
+          SizedBox(
+            height: 15,
+          ),
+
+          _becomeChef(),
+
         ],
       ),
     );
+  }
+
+  _becomeChef(){
+
+    return UserInstance.instance.user.role=="1"? Column(children: <Widget>[
+      SizedBox(
+        height: 15,
+      ),
+
+      RoundedBorderButton(
+        boldText: false,
+        width: MySize.of(context).fitWidth(66),
+        text: "Become A Chef",borderRadius: 5,
+        height: 50,
+        onTap: (){},
+      ),
+
+      SizedBox(
+        height: 15,
+      ),
+    ],):Container();
+  }
+
+  _listOfAction(){
+    List<ProfileData> data =  UserInstance.instance.user.role=="1"? profileDataList.getRange(3, profileDataList.length).toList() : profileDataList;
+
+    return ListView.builder(
+        padding: EdgeInsets.symmetric(horizontal: 20),
+        shrinkWrap: true,
+        itemCount: data.length,
+        physics: ScrollPhysics(),
+        itemBuilder: (context, index) {
+          return _row(data[index]
+            ..onTap = () {
+              _pageNavigationSelection(index);
+            });
+        });
   }
 
   Widget _row(ProfileData profileData) {
@@ -88,7 +129,7 @@ class _ProfileViewState extends State<ProfileView> {
       onTap: profileData.onTap,
       child: Container(
         height: 55,
-        color: profileData.isWhite ? Colors.white : MColor.lightGreyEC,
+        color: (profileDataList.indexOf(profileData)+(UserInstance.instance.user.role=="1"?0:1))%2==0 ? Colors.white : MColor.lightGreyEC,
         child: Row(
           children: <Widget>[
             Expanded(
@@ -123,9 +164,12 @@ class _ProfileViewState extends State<ProfileView> {
   }
 
   _pageNavigationSelection(int index) {
+    index = index + ( UserInstance.instance.user.role=="1"?3:0);
+    print(index);
     Widget navigation;
     switch (index) {
       case 0:
+        print("Chief");
         navigation = ChefRegisterView();
         break;
       case 1:
@@ -139,6 +183,12 @@ class _ProfileViewState extends State<ProfileView> {
       case 4:
         break;
       case 5:
+        LoginModel.signOut();
+
+        Navigator.of(context).popUntil((route)=>route.isFirst);
+        Navigator.of(context).pushReplacement(
+            PageTransition(child: LoginView(), type: PageTransitionType.downToUp));
+
         break;
     }
 
@@ -151,8 +201,7 @@ class _ProfileViewState extends State<ProfileView> {
 class ProfileData {
   String text;
   String image;
-  bool isWhite;
   Function onTap;
 
-  ProfileData({this.text, this.image, this.isWhite, this.onTap});
+  ProfileData({this.text, this.image, this.onTap});
 }

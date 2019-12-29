@@ -1,5 +1,6 @@
 
 
+import 'package:homemade/stream/UserProviderInstance.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'UserModel.dart';
@@ -34,6 +35,13 @@ class LoginModel {
   clearPrefs() async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.clear();
+  }
+
+  static signOut()  async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.clear();
+    UserInstance.userProvider.dispose();
+    UserInstance.userProvider = null;
   }
 
   LoginModel.fromJson(Map<String, dynamic> json) {
