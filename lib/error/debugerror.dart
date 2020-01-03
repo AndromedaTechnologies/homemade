@@ -5,11 +5,19 @@ import 'package:homemade/error/snackbar.dart';
 
 class DebugError{
 
+  //{
+  //"message":"",
+  //"errors":...
+  // }
   static CheckMap(var data,GlobalKey<ScaffoldState> scaffold){
     if(data is Map){
-     data.forEach((key,value){
-       CheckMap(value, scaffold);
-     });
+      if(data['errors']!=null){
+        CheckMap(data['errors'], scaffold);
+      }else {
+        data.forEach((key, value) {
+          CheckMap(value, scaffold);
+        });
+      }
     }else if(data is String){
       CustomSnackBar.SnackBar_3Error(scaffold,title: data,leadingIcon: Icons.error_outline);
     }

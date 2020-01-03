@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:homemade/res/color.dart';
 import 'package:homemade/res/textStyle.dart';
-import 'package:homemade/view/myaccount/myprofile/about.dart';
-import 'package:homemade/view/myaccount/myprofile/mydishes.dart';
-import 'package:homemade/view/myaccount/myprofile/reviews.dart';
 import 'package:homemade/widget/AppBarCustom.dart';
+
+import 'myprofile/about.dart';
+import 'myprofile/mydishes.dart';
+import 'myprofile/reviews.dart';
 
 class MyProfileView extends StatefulWidget {
   @override

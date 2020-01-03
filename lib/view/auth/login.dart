@@ -204,7 +204,6 @@ class _LoginViewState extends State<LoginView> {
   }
 
   ///Functions
-
   _validateForm() {
     setState(() {
       serverError = false;
@@ -215,6 +214,8 @@ class _LoginViewState extends State<LoginView> {
     }
   }
 
+
+  ///Server Call
   _LoginUser() async {
     print("HERE");
     FocusScope.of(context).requestFocus(FocusNode());
@@ -232,7 +233,7 @@ class _LoginViewState extends State<LoginView> {
       });
 
       dio.Response response = await API(_scaffoldKey).postWithoutTokenAndStoreUserData(
-          url: LOGIN_URL, data: data,storeUserData: true);
+          url: LOGIN_URL, body: data,storeUserData: true);
 
       setState(() {
         submit = false;

@@ -23,6 +23,7 @@ class TextFieldWithImage extends StatelessWidget {
   final bool obscureText;
   final bool removeImageIcon;
   final bool isSuffixIcon;
+  final bool enable;
   final bool isSuffixLabel;
 
   final Function onChange;
@@ -48,7 +49,7 @@ class TextFieldWithImage extends StatelessWidget {
       this.onChange,
       this.onSubmit,
       this.removeImageIcon = false,
-      this.onValidate});
+      this.onValidate, this.enable=true});
 
   ///Error message inside Container
   ///Error message below textfields
@@ -58,6 +59,7 @@ class TextFieldWithImage extends StatelessWidget {
     return Container(
       width: width ?? double.infinity,
       child: TextFormField(
+        enabled: enable,
         controller: controller,
         style: TextStyles.textStyleNormalGrey(),
         cursorColor: MColor.application,

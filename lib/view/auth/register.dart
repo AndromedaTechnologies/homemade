@@ -310,7 +310,6 @@ class _RegisterViewState extends State<RegisterView> {
   }
 
   ///Functions
-
   _validateForm() {
 
     setState(() {
@@ -321,7 +320,7 @@ class _RegisterViewState extends State<RegisterView> {
       _RegisterUser();
     }
   }
-
+  ///Server Call
   _RegisterUser() async {
     print("HERE");
     FocusScope.of(context).requestFocus(FocusNode());
@@ -342,7 +341,7 @@ class _RegisterViewState extends State<RegisterView> {
       });
 
       dio.Response response = await API(_scaffoldKey).postWithoutTokenAndStoreUserData(
-          url: REGISTER_URL, data: data,storeUserData: true);
+          url: REGISTER_URL, body: data,storeUserData: true);
 
 
       setState(() {

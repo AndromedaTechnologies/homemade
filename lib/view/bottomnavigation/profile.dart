@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:homemade/model/UserModel.dart';
+import 'package:homemade/model/chefDetailModel.dart';
 import 'package:homemade/model/loginModel.dart';
 import 'package:homemade/res/color.dart';
 import 'package:homemade/res/imagestring.dart';
@@ -8,8 +9,8 @@ import 'package:homemade/res/textStyle.dart';
 import 'package:homemade/stream/UserProvider.dart';
 import 'package:homemade/stream/UserProviderInstance.dart';
 import 'package:homemade/view/auth/login.dart';
-import 'package:homemade/view/myaccount///register.dart';
-import 'package:homemade/view/myaccount/myprofile.dart';
+import 'package:homemade/view/chef//register_update.dart';
+import 'package:homemade/view/chef/myprofile.dart';
 import 'package:homemade/widget/ImageInitials.dart';
 import 'package:homemade/widget/RoundedBorderButton.dart';
 import 'package:page_transition/page_transition.dart';
@@ -21,6 +22,7 @@ class ProfileView extends StatefulWidget {
 
 class _ProfileViewState extends State<ProfileView> {
 
+
   List<ProfileData> profileDataList = [
     ProfileData(text: "Chef Settings", image: chefImage, ),
     ProfileData(text: "My Dishes", image: dinnerImage, ),
@@ -30,6 +32,12 @@ class _ProfileViewState extends State<ProfileView> {
     ProfileData(text: "Sign Out", image: logoutImage),
   ];
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,8 +61,9 @@ class _ProfileViewState extends State<ProfileView> {
                     right: 0,
                     child: Center(
                       child: ImageInitials(
-                        firstName: "Zee",
-                        lastName: "Zee",
+                        firstName: UserInstance.instance.user.firstName,
+                        lastName: UserInstance.instance.user.lastName,
+                        imageURL: UserInstance.instance.user.image,
                         height: 120,
                         width: 120,
                         fontSize: 40,
@@ -68,7 +77,7 @@ class _ProfileViewState extends State<ProfileView> {
           ),
           Center(
             child: Text(
-              "Zee Zee",
+              UserInstance.instance.user.firstName + " " + UserInstance.instance.user.lastName,
               style: TextStyles.textStyleHardBold(fontSize: 26),
             ),
           ),
@@ -99,7 +108,10 @@ class _ProfileViewState extends State<ProfileView> {
         width: MySize.of(context).fitWidth(66),
         text: "Become A Chef",borderRadius: 5,
         height: 50,
-        onTap: (){},
+        onTap: (){
+          Navigator.of(context).push(
+              PageTransition(child: ChefRegisterView(), type: PageTransitionType.downToUp));
+        },
       ),
 
       SizedBox(
@@ -169,10 +181,10 @@ class _ProfileViewState extends State<ProfileView> {
     Widget navigation;
     switch (index) {
       case 0:
-        print("Chief");
-        navigation = ChefRegisterView();
+        navigation = ChefRegisterView(isUpdate: true,);
         break;
       case 1:
+        ///testing
         break;
       case 2:
         navigation = MyProfileView();

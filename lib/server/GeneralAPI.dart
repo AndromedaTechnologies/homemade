@@ -21,9 +21,9 @@ class API {
   API(this.scaffold);
 
   Future postWithoutTokenAndStoreUserData(
-      {String url, FormData data, bool storeUserData}) async {
+      {String url, FormData body, bool storeUserData}) async {
     print(url);
-    print(data);
+    print(body);
     try {
       bool checkConnection = await _checkConnection();
       if (!checkConnection) {
@@ -31,7 +31,7 @@ class API {
       }
 
       Response response = await Dio().post(url,
-          data: data,
+          data: body,
           options: Options(
             headers: {
               "Accept": "application/json",
@@ -59,36 +59,14 @@ class API {
             userModel.prefsSet();
             return responseGet;
           } else {
+            /// Logout user again
             model.clearPrefs();
             return null;
           }
-
-//          SharedPreferences prefs = await SharedPreferences.getInstance();
-//          prefs.setString("token", response.data['token']);
         } else
           return response;
-      } else if (response.statusCode == 400 ||
-          response.statusCode == 401 ||
-          response.statusCode == 403)
-        DebugError.CheckMap(response.data, scaffold);
-      else if (response.statusCode == 404)
-        CustomSnackBar.SnackBar_3Error(scaffold,
-            leadingIcon: Icons.error_outline, title: "Please Contact Support");
-      else if (response.statusCode == 405)
-        CustomSnackBar.SnackBar_3Error(scaffold,
-            leadingIcon: Icons.error_outline, title: "Method Not Allowed");
-      else if (response.statusCode > 405 && response.statusCode < 500)
-        CustomSnackBar.SnackBar_3Error(scaffold,
-            leadingIcon: Icons.error_outline,
-            title: "Error! Code ${response.statusCode}");
-      else if (response.statusCode == 500)
-        CustomSnackBar.SnackBar_3Error(scaffold,
-            leadingIcon: Icons.error_outline, title: "Server not responding");
-      else
-        CustomSnackBar.SnackBar_3Error(scaffold,
-            leadingIcon: Icons.error_outline,
-            title: "Error! Code ${response.statusCode}");
-      return null;
+      } else
+        _serverResponse(response);
     } catch (e) {
       print("ERROR! postWithoutTokenAndStoreUserData $e");
       return null;
@@ -113,7 +91,7 @@ class API {
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
-        "Accept": "application/json"
+            "Accept": "application/json"
           },
           validateStatus: (status) {
             return status < 500;
@@ -132,7 +110,98 @@ class API {
       return null;
   }
 
-  Future<Response> put({String url, dynamic body}) {}
+  Future<Response> put({String url, var body,bool containFile}) async {
+    try {
+      print(url);
+
+      bool checkConnection = await _checkConnection();
+      if (!checkConnection) {
+        return null;
+      }
+
+      String token = await UserModel.getToken();
+
+      Response response = await Dio().put(url,
+          data: body,
+          options: Options(
+            headers: {
+              'Authorization': 'Bearer $token',
+              "Accept": "application/json"
+            },
+            contentType: containFile? "multipart/form-data" :null ,
+            validateStatus: (status) {
+              return status < 500;
+            },
+          ));
+      print(response.data);
+      print(response.statusCode);
+
+      int checkToken = await RefreshToken.checkTokenIsValid(response);
+      if (checkToken == 1)
+        return _serverResponse(response);
+      else if (checkToken == 2)
+        return await put(url: url, body: body);
+      else
+        return null;
+    } catch (e) {
+      print("Post API ERROR $e");
+      return null;
+    }
+  }
+
+  Future<Response> post({String url, var body, bool containFile}) async {
+    try {
+      print(url);
+
+//      body.fields.forEach((field) => print(field.key + " " + field.value));
+      if (body is FormData) {
+        print(body.length);
+        print(body.isFinalized);
+        body.fields.forEach((field)=>print(field.key+" "+field.value));
+        body.files.forEach((file){print(file.key);
+        print(file.value.contentType);
+        print(file.value.filename);
+        });
+//        if(!body.isFinalized)
+//          body.finalize();
+      }
+
+      bool checkConnection = await _checkConnection();
+      if (!checkConnection) {
+        return null;
+      }
+
+      String token = await UserModel.getToken();
+
+
+      Response response = await Dio().post(url,
+          data: body,
+          options: Options(
+            headers:  {
+              "Authorization": 'Bearer $token',
+              "Accept": "application/json"
+            },
+            contentType: containFile? "application/json" :null ,
+            validateStatus: (status) {
+              return status < 500;
+            },
+          ));
+
+      print(response.data);
+      print(response.statusCode);
+
+      int checkToken = await RefreshToken.checkTokenIsValid(response);
+      if (checkToken == 1)
+        return _serverResponse(response);
+      else if (checkToken == 2)
+        return await post(url: url, body: body);
+      else
+        return null;
+    } catch (e) {
+      print("Post API ERROR $e");
+      return null;
+    }
+  }
 
   _checkConnection() async {
     var connectivityResult = await (Connectivity().checkConnectivity());
@@ -150,9 +219,10 @@ class API {
   Future<Response> _serverResponse(Response response) async {
     if (response.statusCode >= 200 && response.statusCode <= 204)
       return response;
-    else if (response.statusCode == 400 ||
-        response.statusCode == 401 ||
-        response.statusCode == 403)
+    else if (response.statusCode >= 400 &&
+        response.statusCode < 500 &&
+        response.statusCode != 404 &&
+        response.statusCode != 405)
       DebugError.CheckMap(response.data, scaffold);
     else if (response.statusCode == 404)
       CustomSnackBar.SnackBar_3Error(scaffold,

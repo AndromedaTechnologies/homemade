@@ -6,17 +6,20 @@ import 'package:homemade/res/textStyle.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:transparent_image/transparent_image.dart';
 
-class ImageSelect extends StatefulWidget {
+class ImageSelectOrServer extends StatefulWidget {
   final File file;
+  final String imageURL;
   final Function callBackFunction;
+  final bool enable;
 
-  ImageSelect(this.file, this.callBackFunction);
+  ImageSelectOrServer(this.file, this.callBackFunction,
+      {this.imageURL, this.enable = true});
 
   @override
-  _ImageSelectState createState() => _ImageSelectState();
+  _ImageSelectOrServerState createState() => _ImageSelectOrServerState();
 }
 
-class _ImageSelectState extends State<ImageSelect> {
+class _ImageSelectOrServerState extends State<ImageSelectOrServer> {
   File file;
 
   @override
@@ -30,7 +33,7 @@ class _ImageSelectState extends State<ImageSelect> {
   Widget build(BuildContext context) {
     double widthHeight = 65;
     return InkWell(
-      onTap: _loadImage,
+      onTap: widget.enable ? _loadImage : null,
       child: file != null
           ? Row(
               children: <Widget>[
@@ -54,34 +57,58 @@ class _ImageSelectState extends State<ImageSelect> {
                 ),
               ],
             )
-          : Row(
-              children: <Widget>[
-                Container(
-                  width: widthHeight,
-                  height: widthHeight,
-                  decoration: BoxDecoration(
-                      color: MColor.application, shape: BoxShape.circle),
-                  child: Center(
-                    child: Icon(
-                      Icons.camera,
-                      color: Colors.white,
-                      size: 30,
+          : widget.imageURL != null && widget.imageURL != ""
+              ? Row(
+                  children: <Widget>[
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(200),
+                      child: FadeInImage(
+                          placeholder: MemoryImage(kTransparentImage),
+                          fit: BoxFit.cover,
+                          width: widthHeight,
+                          height: widthHeight,
+                          image: NetworkImage(widget.imageURL)),
                     ),
-                  ),
-                ),
-                SizedBox(
-                  width: 8,
-                ),
-                Text(
-                  "Select Image",
-                  style:
-                      TextStyles.textStyleNormalDarkGreySemiBold(fontSize: 20)
+                    SizedBox(
+                      width: 8,
+                    ),
+                    Text(
+                      "Update Image",
+                      style: TextStyles.textStyleNormalSemiBold(fontSize: 20)
                           .apply(
                               decoration: TextDecoration.combine(
                                   [TextDecoration.underline])),
+                    ),
+                  ],
+                )
+              : Row(
+                  children: <Widget>[
+                    Container(
+                      width: widthHeight,
+                      height: widthHeight,
+                      decoration: BoxDecoration(
+                          color: MColor.application, shape: BoxShape.circle),
+                      child: Center(
+                        child: Icon(
+                          Icons.camera,
+                          color: Colors.white,
+                          size: 30,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 8,
+                    ),
+                    Text(
+                      "Select Image",
+                      style: TextStyles.textStyleNormalDarkGreySemiBold(
+                              fontSize: 20)
+                          .apply(
+                              decoration: TextDecoration.combine(
+                                  [TextDecoration.underline])),
+                    ),
+                  ],
                 ),
-              ],
-            ),
     );
   }
 
