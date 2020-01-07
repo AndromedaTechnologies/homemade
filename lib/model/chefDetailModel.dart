@@ -9,6 +9,9 @@ class ChefDetailModel {
 
   ChefDetailModel({this.chef, this.awards, this.cuisines});
 
+
+
+
   ChefDetailModel.fromJson(Map<String, dynamic> json) {
     chef = json['chef'] != null ? new ChefModel.fromJson(json['chef']) : null;
     if (json['awards'] != null) {

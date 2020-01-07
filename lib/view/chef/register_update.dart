@@ -14,7 +14,7 @@ import 'package:homemade/server/GeneralAPI.dart';
 import 'package:homemade/stream/UserProvider.dart';
 import 'package:homemade/stream/UserProviderInstance.dart';
 import 'package:homemade/stream/notifier.dart';
-import 'package:homemade/view/classes/cuisine.dart';
+import 'package:homemade/dropdownClass/cuisine.dart';
 import 'package:homemade/widget/AppBarCustom.dart';
 import 'package:homemade/widget/ImageSelect.dart';
 import 'package:homemade/widget/OutlineBorderButton.dart';
@@ -27,16 +27,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:path/path.dart' as path;
 
-class ChefRegisterView extends StatefulWidget {
+class ChefRegisterUpdateView extends StatefulWidget {
   final bool isUpdate;
 
-  ChefRegisterView({this.isUpdate = false});
+  ChefRegisterUpdateView({this.isUpdate = false});
 
   @override
-  _ChefRegisterViewState createState() => _ChefRegisterViewState();
+  _ChefRegisterUpdateViewState createState() => _ChefRegisterUpdateViewState();
 }
 
-class _ChefRegisterViewState extends State<ChefRegisterView>
+class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
     with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
@@ -105,6 +105,8 @@ class _ChefRegisterViewState extends State<ChefRegisterView>
     bankNameController = TextEditingController();
     experienceController = TextEditingController();
     pickUpLocationController = TextEditingController();
+
+    cuisinesList.forEach((cui){cui.isSelected=false;});
 
     _tabController = new TabController(length: 3, vsync: this);
     _tabController.addListener(() {
@@ -590,27 +592,7 @@ class _ChefRegisterViewState extends State<ChefRegisterView>
                   bottom: BorderSide(color: MColor.lightGreyB6, width: 1))),
           child: Stack(
             children: <Widget>[
-              Center(
-                child: Container(
-//                      color:Colors.red,
-                  padding: EdgeInsets.only(right: 18, top: 5),
-                  width: MySize.of(context).fitWidth(80),
-                  child: Wrap(
-                      spacing: 4,
-                      children: selectedCuisines().length > 0
-                          ? selectedCuisines()
-                          : [
-                              Padding(
-                                padding: const EdgeInsets.only(top: 8.0),
-                                child: Text(
-                                  "Select Cuisine".toUpperCase(),
-                                  style: TextStyles.textStyleBold(
-                                      fontSize: 16, spacing: 4.0),
-                                ),
-                              ),
-                            ]),
-                ),
-              ),
+
               DropdownButton<dynamic>(
                 value: null,
                 icon: Icon(
@@ -639,6 +621,28 @@ class _ChefRegisterViewState extends State<ChefRegisterView>
                         state: this,
                       ));
                 }).toList(),
+              ),
+
+              Center(
+                child: Container(
+//                      color:Colors.red,
+                  padding: EdgeInsets.only(right: 18, top: 5),
+                  width: MySize.of(context).fitWidth(80),
+                  child: Wrap(
+                      spacing: 4,
+                      children: selectedCuisines().length > 0
+                          ? selectedCuisines()
+                          : [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Text(
+                            "Select Cuisine".toUpperCase(),
+                            style: TextStyles.textStyleBold(
+                                fontSize: 16, spacing: 4.0),
+                          ),
+                        ),
+                      ]),
+                ),
               ),
             ],
           ),
@@ -681,9 +685,9 @@ class _ChefRegisterViewState extends State<ChefRegisterView>
           controller: pickUpLocationController,
           errorMessage: "Please Provide Location",
           onValidate: (val) {
-            if (Condition.nonEmptyCondition(val)) {
-              return "Provide Business Name";
-            }
+//            if (Condition.nonEmptyCondition(val)) {
+//              return "Provide Business Name";
+//            }
             return null;
           },
           label: "Location",
@@ -1054,16 +1058,20 @@ class _ChefRegisterViewState extends State<ChefRegisterView>
         style: TextStyles.textStyleNormalWhite(fontSize: 14),
       ),
       backgroundColor: MColor.application,
+      disabledColor:  MColor.application,
+      isEnabled: true,
+      labelStyle: TextStyles.textStyleNormalWhite(fontSize: 14),
+
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
       deleteIcon: Icon(
         Icons.clear,
         size: 16,
         color: Colors.white,
       ),
-      onDeleted: () {
+      onDeleted: (widget.isUpdate ? !showEditButton : true)? () {
         cuisine.isSelected = !cuisine.isSelected;
         setState(() {});
-      },
+      }:null,
     );
   }
 
@@ -1074,16 +1082,18 @@ class _ChefRegisterViewState extends State<ChefRegisterView>
         style: TextStyles.textStyleNormalWhite(fontSize: 14),
       ),
       backgroundColor: MColor.application,
+      disabledColor:  MColor.application,
+
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
       deleteIcon: Icon(
         Icons.clear,
         size: 16,
         color: Colors.white,
       ),
-      onDeleted: () {
+      onDeleted:(widget.isUpdate ? !showEditButton : true)? () {
         awardAndCertifications.remove(text);
         setState(() {});
-      },
+      }:null,
     );
   }
 
@@ -1257,7 +1267,7 @@ class _ChefRegisterViewState extends State<ChefRegisterView>
           )));
 
       Response response = await API(_scaffoldKey)
-          .post(url: CHEF_REGISTER_URL, body: form, containFile: true);
+          .post(url: CHEF_REGISTER_URL, body: form, contentType: "multipart/form-data");
 
       setState(() {
         submitDataLoading = false;
@@ -1290,11 +1300,13 @@ class _ChefRegisterViewState extends State<ChefRegisterView>
         submitDataLoading = true;
       });
 
-      FormData form = FormData.fromMap({
+
+
+      Map map = {
         "business_name": businessNameController.text,
         "business_email": businessEmailController.text,
         "business_phone": businessPhoneController.text,
-        "experience": experienceController.text,
+        "experience": double.parse(experienceController.text).floor(),
         "city": businessCityController.text,
         "state": businessStateController.text,
         "postal_code": businessPostalCodeController.text,
@@ -1306,45 +1318,29 @@ class _ChefRegisterViewState extends State<ChefRegisterView>
         "cnic": governmentIDCNICController.text,
         "iban": ibanController.text,
         "bank_name": bankNameController.text
-      });
-
-      form.fields.addAll(
-          awardAndCertifications.map((award) => MapEntry("awards[]", award)));
-
-      form.fields.addAll(cuisinesList
-          .where((cusine) => cusine.isSelected)
-          .toList()
-          .map((award) => MapEntry("cuisines[]", award.text)));
+      };
 
 
-      form.fields.forEach((entry){
-        print("${entry.key} ${entry.value}");
-      });
+      map.addAll({"awards":awardAndCertifications.map((award)=>award).toList()});
+      map.addAll({"cuisines":cuisinesList.where((cusine) => cusine.isSelected).toList().map((cusine)=>cusine.text).toList()});
 
-
-//      form.files.add(MapEntry(
-//          "business_image",
-//          MultipartFile.fromFileSync(
-//            _professionalImage.path,
-//            filename: path.basename(_professionalImage.path),
-//          )));
+//      form.addEntries(
+//          awardAndCertifications.map((award) => MapEntry("awards[]", award)));
 //
-//      form.files.add(MapEntry(
-//          "cnic_front",
-//          MultipartFile.fromFileSync(
-//            frontFileImage.path,
-//            filename: path.basename(frontFileImage.path),
-//          )));
+//      form.addEntries(cuisinesList
+//          .where((cusine) => cusine.isSelected)
+//          .toList()
+//          .map((award) => MapEntry("cuisines[]", award.text)));
 //
-//      form.files.add(MapEntry(
-//          "cnic_back",
-//          MultipartFile.fromFileSync(
-//            backFileImage.path,
-//            filename: path.basename(backFileImage.path),
-//          )));
+//
+//      form.fields.forEach((entry){
+//        print("${entry.key} ${entry.value}");
+//      });
+
+
 
       Response response = await API(_scaffoldKey)
-          .put(url: CHEF_UPDATE_URL, body: form, containFile: true);
+          .put(url: CHEF_UPDATE_URL, body: map, contentType: "application/x-www-form-urlencoded");
 
       setState(() {
         submitDataLoading = false;
@@ -1394,7 +1390,7 @@ class _ChefRegisterViewState extends State<ChefRegisterView>
 
 
       Response response = await API(_scaffoldKey)
-          .post(url: CHEF_UPDATE_IMAGE_URL, body: form, containFile: true);
+          .post(url: CHEF_UPDATE_IMAGE_URL, body: form, contentType: "multipart/form-data");
 
       setState(() {
         submitDataLoading = false;
@@ -1407,6 +1403,11 @@ class _ChefRegisterViewState extends State<ChefRegisterView>
         //
         UserInstance.instance.dispatch(ReloadUserData());
 
+      }else{
+        setState(() {
+          _professionalImage=null;
+
+        });
       }
     } catch (e) {
       setState(() {

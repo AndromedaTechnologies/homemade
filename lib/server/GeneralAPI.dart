@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-//import 'package:http/http.dart' as http;
 
 import 'package:connectivity/connectivity.dart';
 import 'package:dio/dio.dart';
@@ -11,7 +10,6 @@ import 'package:homemade/error/snackbar.dart';
 import 'package:homemade/model/UserModel.dart';
 import 'package:homemade/model/loginModel.dart';
 import 'package:homemade/res/stringapi.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'checkToken.dart';
 
@@ -93,6 +91,7 @@ class API {
             'Authorization': 'Bearer $token',
             "Accept": "application/json"
           },
+          receiveTimeout: 5000,
           validateStatus: (status) {
             return status < 500;
           },
@@ -110,9 +109,10 @@ class API {
       return null;
   }
 
-  Future<Response> put({String url, var body,bool containFile}) async {
+  Future<Response> put({String url, var body,String contentType}) async {
     try {
-      print(url);
+      print("Put $url");
+      print(contentType);
 
       bool checkConnection = await _checkConnection();
       if (!checkConnection) {
@@ -127,8 +127,8 @@ class API {
             headers: {
               'Authorization': 'Bearer $token',
               "Accept": "application/json"
-            },
-            contentType: containFile? "multipart/form-data" :null ,
+            },receiveTimeout: 5000,
+            contentType: contentType!=null? contentType :null ,
             validateStatus: (status) {
               return status < 500;
             },
@@ -149,7 +149,7 @@ class API {
     }
   }
 
-  Future<Response> post({String url, var body, bool containFile}) async {
+  Future<Response> post({String url, var body, String contentType}) async {
     try {
       print(url);
 
@@ -181,7 +181,7 @@ class API {
               "Authorization": 'Bearer $token',
               "Accept": "application/json"
             },
-            contentType: containFile? "application/json" :null ,
+            contentType: contentType!=null? contentType :null ,
             validateStatus: (status) {
               return status < 500;
             },

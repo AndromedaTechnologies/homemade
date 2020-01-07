@@ -110,7 +110,7 @@ class _ProfileViewState extends State<ProfileView> {
         height: 50,
         onTap: (){
           Navigator.of(context).push(
-              PageTransition(child: ChefRegisterView(), type: PageTransitionType.downToUp));
+              PageTransition(child: ChefRegisterUpdateView(), type: PageTransitionType.downToUp));
         },
       ),
 
@@ -181,7 +181,7 @@ class _ProfileViewState extends State<ProfileView> {
     Widget navigation;
     switch (index) {
       case 0:
-        navigation = ChefRegisterView(isUpdate: true,);
+        navigation = ChefRegisterUpdateView(isUpdate: true,);
         break;
       case 1:
         ///testing
