@@ -10,6 +10,7 @@ import 'package:homemade/stream/UserProvider.dart';
 import 'package:homemade/stream/UserProviderInstance.dart';
 import 'package:homemade/view/auth/login.dart';
 import 'package:homemade/view/chef//register_update.dart';
+import 'package:homemade/view/chef/dish.dart';
 import 'package:homemade/view/chef/myprofile.dart';
 import 'package:homemade/widget/ImageInitials.dart';
 import 'package:homemade/widget/RoundedBorderButton.dart';
@@ -184,13 +185,14 @@ class _ProfileViewState extends State<ProfileView> {
         navigation = ChefRegisterUpdateView(isUpdate: true,);
         break;
       case 1:
-        ///testing
+        navigation = DishAddUpdateView();
         break;
       case 2:
         navigation = MyProfileView();
 
         break;
       case 3:
+
         break;
       case 4:
         break;

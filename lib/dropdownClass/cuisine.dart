@@ -1,20 +1,20 @@
 
 class Cuisine{
   String text;
-  bool isSelected;
+  bool selected;
 
-  Cuisine({this.text, this.isSelected});
+  Cuisine({this.text, this.selected});
 }
 
 List<Cuisine> cuisinesList =  [
-  Cuisine(text: "Pakistani",isSelected: false),
-  Cuisine(text: "Mediterranean",isSelected: false),
-  Cuisine(text: "Chinese",isSelected: false),
-  Cuisine(text: "Italian",isSelected: false),
-  Cuisine(text: "Mexican",isSelected: false),
-  Cuisine(text: "American",isSelected: false),
-  Cuisine(text: "Turkish",isSelected: false),
-  Cuisine(text: "BBQ",isSelected: false),
-  Cuisine(text: "Greek",isSelected: false),
-  Cuisine(text: "other",isSelected: false),
+  Cuisine(text: "Pakistani",selected: false),
+  Cuisine(text: "Mediterranean",selected: false),
+  Cuisine(text: "Chinese",selected: false),
+  Cuisine(text: "Italian",selected: false),
+  Cuisine(text: "Mexican",selected: false),
+  Cuisine(text: "American",selected: false),
+  Cuisine(text: "Turkish",selected: false),
+  Cuisine(text: "BBQ",selected: false),
+  Cuisine(text: "Greek",selected: false),
+  Cuisine(text: "other",selected: false),
 ];

@@ -29,6 +29,7 @@ class TextFieldWithImage extends StatelessWidget {
   final Function onChange;
   final Function onValidate;
   final Function onSubmit;
+  final bool isMultiLine;
 
   TextFieldWithImage(
       {this.focusNode,
@@ -44,6 +45,7 @@ class TextFieldWithImage extends StatelessWidget {
       this.icon,
       this.label,
       this.hint,
+      this.isMultiLine=false,
       this.preFixImage,
       this.obscureText = false,
       this.onChange,
@@ -69,6 +71,8 @@ class TextFieldWithImage extends StatelessWidget {
         onChanged: onChange,
         validator: onValidate,
         onFieldSubmitted: onSubmit,
+        maxLines: isMultiLine? 5: null,
+
         decoration: InputDecoration(
             border: UnderlineInputBorder(
               borderSide: BorderSide(width: 1, color: MColor.lightGreyB6),
@@ -85,6 +89,7 @@ class TextFieldWithImage extends StatelessWidget {
             labelText: label.toUpperCase(),
             labelStyle: TextStyles.textStyleBold(fontSize: 16, spacing: 4.0),
             hintText: hint,
+
             hintStyle: TextStyles.textStyleNormalGrey(),
             suffixIcon: removeImageIcon
                 ? null

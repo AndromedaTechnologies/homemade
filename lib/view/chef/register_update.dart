@@ -17,7 +17,11 @@ import 'package:homemade/stream/notifier.dart';
 import 'package:homemade/dropdownClass/cuisine.dart';
 import 'package:homemade/widget/AppBarCustom.dart';
 import 'package:homemade/widget/ImageSelect.dart';
+import 'package:homemade/widget/MultSelectDropDownItem.dart';
+import 'package:homemade/widget/MultiSelectDropDown.dart';
 import 'package:homemade/widget/OutlineBorderButton.dart';
+import 'package:homemade/widget/PopupMultiInputDialog.dart';
+import 'package:homemade/widget/PopupTextField.dart';
 import 'package:homemade/widget/RoundedBorderButton.dart';
 import 'package:homemade/widget/TextFieldClicked.dart';
 import 'package:homemade/widget/TextFieldWIthImage.dart';
@@ -106,7 +110,7 @@ class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
     experienceController = TextEditingController();
     pickUpLocationController = TextEditingController();
 
-    cuisinesList.forEach((cui){cui.isSelected=false;});
+    cuisinesList.forEach((cui){cui.selected=false;});
 
     _tabController = new TabController(length: 3, vsync: this);
     _tabController.addListener(() {
@@ -149,7 +153,7 @@ class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
 //        cuisinesList.addAll(chefDetailModel.cuisines.map((cuisine)=>Cuisine()).toList());
 
         cuisinesList.forEach((cuisine) {
-          cuisine.isSelected = chefDetailModel.cuisines
+          cuisine.selected = chefDetailModel.cuisines
                   .where((cui) =>
                       cui.cuisine.toLowerCase() == cuisine.text.toLowerCase())
                   .toList()
@@ -585,68 +589,14 @@ class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
           height: 20,
         ),
 
-        Container(
-          width: MySize.of(context).fitWidth(80),
-          decoration: BoxDecoration(
-              border: Border(
-                  bottom: BorderSide(color: MColor.lightGreyB6, width: 1))),
-          child: Stack(
-            children: <Widget>[
+        MultiSelectDropDown(
+          label: "Select Cuisine",
+          isUpdate: widget.isUpdate,showEditButton: showEditButton,
+          productList: cuisinesList,
 
-              DropdownButton<dynamic>(
-                value: null,
-                icon: Icon(
-                  Icons.keyboard_arrow_down,
-                  color: MColor.lightGreyB6,
-                ),
-                iconSize: 24,
-                elevation: 0,
-                isExpanded: true,
-                underline: Container(),
-                onChanged: (widget.isUpdate ? !showEditButton : true)
-                    ? (_) {
-//                              List<String> split =
-//                              techDropDownSelectedValue.split(',');
-//                              split.contains(index);
-                        setState(() {});
-                      }
-                    : null,
-                hint: Text(""),
-                items: cuisinesList
-                    .map<DropdownMenuItem<dynamic>>((Cuisine value) {
-                  return DropdownMenuItem<dynamic>(
-                      value: value.text,
-                      child: DropDownItem(
-                        cuisine: value,
-                        state: this,
-                      ));
-                }).toList(),
-              ),
-
-              Center(
-                child: Container(
-//                      color:Colors.red,
-                  padding: EdgeInsets.only(right: 18, top: 5),
-                  width: MySize.of(context).fitWidth(80),
-                  child: Wrap(
-                      spacing: 4,
-                      children: selectedCuisines().length > 0
-                          ? selectedCuisines()
-                          : [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Text(
-                            "Select Cuisine".toUpperCase(),
-                            style: TextStyles.textStyleBold(
-                                fontSize: 16, spacing: 4.0),
-                          ),
-                        ),
-                      ]),
-                ),
-              ),
-            ],
-          ),
         ),
+
+
         SizedBox(
           height: 20,
         ),
@@ -697,42 +647,57 @@ class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
         SizedBox(
           height: 20,
         ),
-        InkWell(
-          onTap:
-              (widget.isUpdate ? !showEditButton : true) ? _alertDialog : null,
-          child: Container(
-            width: MySize.of(context).fitWidth(80),
-            decoration: BoxDecoration(
-                border: Border(
-                    bottom: BorderSide(color: MColor.lightGreyB6, width: 1))),
-            padding: EdgeInsets.only(bottom: 5),
-            child: Stack(
-              children: <Widget>[
-                Center(
-                  child: Container(
-//                      color:Colors.red,
-                    padding: EdgeInsets.only(right: 18, top: 5),
-                    width: MySize.of(context).fitWidth(80),
-                    child: Wrap(
-                        spacing: 4,
-                        children: awardsCertifications().length > 0
-                            ? awardsCertifications()
-                            : [
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 8.0),
-                                  child: Text(
-                                    "Awards and Certification".toUpperCase(),
-                                    style: TextStyles.textStyleBold(
-                                        fontSize: 16, spacing: 4.0),
-                                  ),
-                                ),
-                              ]),
-                  ),
-                ),
-              ],
-            ),
-          ),
+
+        PopupTextField(
+          showEditButton: showEditButton,
+          isUpdate: widget.isUpdate,
+          dataList: awardAndCertifications,
+          deleteFun: (widget.isUpdate ? !showEditButton : true)?
+            _deletePopDialogItem
+          :null,
+          labelDialog: "Item",
+          labelTextField: "Awards and Certification",
+          popDialog: _popDialog,
         ),
+
+
+//        InkWell(
+//          onTap:
+//          (widget.isUpdate ? !showEditButton : true) ? _alertDialog : null,
+//          child: Container(
+//            width: MySize.of(context).fitWidth(80),
+//            decoration: BoxDecoration(
+//                border: Border(
+//                    bottom: BorderSide(color: MColor.lightGreyB6, width: 1))),
+//            padding: EdgeInsets.only(bottom: 5),
+//            child: Stack(
+//              children: <Widget>[
+//                Center(
+//                  child: Container(
+////                      color:Colors.red,
+//                    padding: EdgeInsets.only(right: 18, top: 5),
+//                    width: MySize.of(context).fitWidth(80),
+//                    child: Wrap(
+//                        spacing: 4,
+//                        children: awardsCertifications().length > 0
+//                            ? awardsCertifications()
+//                            : [
+//                          Padding(
+//                            padding: const EdgeInsets.only(top: 8.0),
+//                            child: Text(
+//                              "Awards and Certification".toUpperCase(),
+//                              style: TextStyles.textStyleBold(
+//                                  fontSize: 16, spacing: 4.0),
+//                            ),
+//                          ),
+//                        ]),
+//                  ),
+//                ),
+//              ],
+//            ),
+//          ),
+//        ),
+
         SizedBox(
           height: 20,
         ),
@@ -1038,65 +1003,6 @@ class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
     );
   }
 
-  List<Widget> selectedCuisines() {
-    return cuisinesList
-        .where((cuisine) => cuisine.isSelected)
-        .toList()
-        .map((cuisine) {
-      return _chipCuisine(cuisine);
-    }).toList();
-  }
-
-  List<Widget> awardsCertifications() {
-    return awardAndCertifications.map((str) => _chip(str)).toList();
-  }
-
-  Widget _chipCuisine(Cuisine cuisine) {
-    return InputChip(
-      label: Text(
-        cuisine.text,
-        style: TextStyles.textStyleNormalWhite(fontSize: 14),
-      ),
-      backgroundColor: MColor.application,
-      disabledColor:  MColor.application,
-      isEnabled: true,
-      labelStyle: TextStyles.textStyleNormalWhite(fontSize: 14),
-
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
-      deleteIcon: Icon(
-        Icons.clear,
-        size: 16,
-        color: Colors.white,
-      ),
-      onDeleted: (widget.isUpdate ? !showEditButton : true)? () {
-        cuisine.isSelected = !cuisine.isSelected;
-        setState(() {});
-      }:null,
-    );
-  }
-
-  Widget _chip(String text) {
-    return InputChip(
-      label: Text(
-        text,
-        style: TextStyles.textStyleNormalWhite(fontSize: 14),
-      ),
-      backgroundColor: MColor.application,
-      disabledColor:  MColor.application,
-
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
-      deleteIcon: Icon(
-        Icons.clear,
-        size: 16,
-        color: Colors.white,
-      ),
-      onDeleted:(widget.isUpdate ? !showEditButton : true)? () {
-        awardAndCertifications.remove(text);
-        setState(() {});
-      }:null,
-    );
-  }
-
   ///
   ///
   ///Functions
@@ -1161,19 +1067,15 @@ class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
     }
   }
 
-  _alertDialog() {
-    showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) {
-          return AlertDialogAwardAndCertificate(
-              awardAndCertifications, _popDialog);
-        });
-  }
-
   _popDialog(List<String> awardsCertificates) {
     awardAndCertifications = awardsCertificates;
     setState(() {});
+  }
+
+  _deletePopDialogItem(text){
+
+      awardAndCertifications.remove(text);
+      setState(() {});
   }
 
   _callBackFromProfessionalImage(File file) {
@@ -1241,7 +1143,7 @@ class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
           awardAndCertifications.map((award) => MapEntry("awards[]", award)));
 
       form.fields.addAll(cuisinesList
-          .where((cusine) => cusine.isSelected)
+          .where((cusine) => cusine.selected)
           .toList()
           .map((award) => MapEntry("cuisines[]", award.text)));
 
@@ -1322,7 +1224,7 @@ class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
 
 
       map.addAll({"awards":awardAndCertifications.map((award)=>award).toList()});
-      map.addAll({"cuisines":cuisinesList.where((cusine) => cusine.isSelected).toList().map((cusine)=>cusine.text).toList()});
+      map.addAll({"cuisines":cuisinesList.where((cusine) => cusine.selected).toList().map((cusine)=>cusine.text).toList()});
 
 //      form.addEntries(
 //          awardAndCertifications.map((award) => MapEntry("awards[]", award)));
@@ -1418,197 +1320,4 @@ class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
   }
 }
 
-class DropDownItem extends StatefulWidget {
-  Cuisine cuisine;
-  State state;
 
-  DropDownItem({this.cuisine, this.state});
-
-  @override
-  _DropDownItemState createState() => _DropDownItemState();
-}
-
-class _DropDownItemState extends State<DropDownItem> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-
-  @override
-  Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-    return InkWell(
-      onTap: () {
-        widget.cuisine.isSelected = !widget.cuisine.isSelected;
-        setState(() {});
-
-        widget.state.setState(() {});
-      },
-      child: Row(
-        children: <Widget>[
-          Container(
-              width: MySize.of(context).fitWidth(75),
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-              color: widget.cuisine.isSelected
-                  ? MColor.lightGreyB6.withOpacity(0.6)
-                  : null,
-              child: Text(
-                widget.cuisine.text,
-                style: TextStyles.textStyleNormalDarkGrey(),
-              )),
-        ],
-      ),
-    );
-  }
-}
-
-class AlertDialogAwardAndCertificate extends StatefulWidget {
-  final List<String> awardsAndCertificates;
-  final Function callBackFunction;
-
-  AlertDialogAwardAndCertificate(
-      this.awardsAndCertificates, this.callBackFunction);
-
-  @override
-  _AlertDialogAwardAndCertificateState createState() =>
-      _AlertDialogAwardAndCertificateState();
-}
-
-class _AlertDialogAwardAndCertificateState
-    extends State<AlertDialogAwardAndCertificate> {
-  TextEditingController controller;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    controller = TextEditingController();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white.withOpacity(0.0),
-      body: Center(
-        child: Padding(
-          padding: EdgeInsets.all(20.0),
-          child: Center(
-            child: Container(
-              padding: EdgeInsets.all(20.0),
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                  boxShadow: [
-                    BoxShadow(
-                        color: MColor.lightGreyB6,
-                        spreadRadius: 0,
-                        blurRadius: 4.0,
-                        offset: Offset(0, 3))
-                  ]),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  _stepperHeading("Awards and Certifications"),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    children: <Widget>[
-                      Expanded(
-                        flex: 7,
-                        child: TextFieldWithImage(
-                          controller: controller,
-                          label: "Item",
-                          removeImageIcon: true,
-                          textInputType: TextInputType.text,
-                        ),
-                      ),
-                      Expanded(
-                        flex: 3,
-                        child: FlatButton(
-                            onPressed: _addItem,
-                            color: MColor.application,
-                            child: Text(
-                              "Save".toUpperCase(),
-                              style: TextStyles.textStyleBoldWhite(
-                                  fontSize: 16, spacing: 0.4),
-                            )),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Wrap(spacing: 4, children: awardsCertifications()),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  FlatButton(
-                      onPressed: () {
-                        widget.callBackFunction(widget.awardsAndCertificates);
-                        Navigator.pop(context);
-                      },
-                      color: MColor.application,
-                      child: Text(
-                        "Done".toUpperCase(),
-                        style: TextStyles.textStyleBoldWhite(
-                            fontSize: 16, spacing: 0.4),
-                      )),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  List<Widget> awardsCertifications() {
-    return widget.awardsAndCertificates.map((ac) => _chip(ac)).toList();
-  }
-
-  Widget _chip(String text) {
-    return InputChip(
-      label: Text(
-        text,
-        style: TextStyles.textStyleNormalWhite(fontSize: 14),
-      ),
-      backgroundColor: MColor.application,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
-      deleteIcon: Icon(
-        Icons.clear,
-        size: 16,
-        color: Colors.white,
-      ),
-      onDeleted: () {
-        widget.awardsAndCertificates.remove(text);
-        setState(() {});
-      },
-    );
-  }
-
-  Widget _stepperHeading(String heading) {
-    return Row(
-      children: <Widget>[
-        Expanded(
-          flex: 7,
-          child: Text(
-            heading,
-            style: TextStyles.textStyleNormalDarkGreyBold(fontSize: 20),
-          ),
-        ),
-      ],
-    );
-  }
-
-  ///
-  ///
-  /// Functions
-  ///
-  _addItem() {
-    print("add");
-    if (controller.text != "") {
-      print("Add ${controller.text}");
-      widget.awardsAndCertificates.add(controller.text);
-      controller.clear();
-      setState(() {});
-    }
-  }
-}
