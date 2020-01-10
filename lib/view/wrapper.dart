@@ -1,9 +1,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:homemade/model/UserStreamModel.dart';
-import 'package:homemade/stream/UserProvider.dart';
-import 'package:homemade/stream/UserProviderInstance.dart';
-import 'package:homemade/stream/notifier.dart';
+import 'package:homemade/stream/user/UserProvider.dart';
+import 'package:homemade/stream/user/UserProviderInstance.dart';
+import 'package:homemade/stream/user/notifier.dart';
 import 'package:homemade/view/pageselection.dart';
 import 'package:provider/provider.dart';
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:homemade/res/color.dart';
 import 'package:homemade/res/imagestring.dart';
-import 'package:homemade/stream/UserProviderInstance.dart';
+import 'package:homemade/stream/user/UserProviderInstance.dart';
 import 'package:homemade/view/bottomnavigation/map.dart';
 import 'package:homemade/view/bottomnavigation/profile.dart';
 import 'package:homemade/widget/AppBarCustom.dart';

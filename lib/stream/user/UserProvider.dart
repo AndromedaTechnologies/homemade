@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:homemade/view/classes/NavigationBar.dart';
-import '../model/UserStreamModel.dart';
+import '../../model/UserStreamModel.dart';
 import 'notifier.dart';
 
 class UserProvider with ChangeNotifier {

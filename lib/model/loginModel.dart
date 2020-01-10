@@ -1,6 +1,6 @@
 
 
-import 'package:homemade/stream/UserProviderInstance.dart';
+import 'package:homemade/stream/user/UserProviderInstance.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'UserModel.dart';
