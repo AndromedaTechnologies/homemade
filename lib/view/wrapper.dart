@@ -32,7 +32,19 @@ class _WrapperStreamState extends State<WrapperStream> {
 
     return StreamProvider<UserStreamModel>.value(
       value: userProviderInstance.status,
-      child: PageSelection(),
+      child: PageSelection()
     );
   }
+
+
 }
+
+class ErrorView extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(body: Center(
+      child: Text("We are Sorry for this Inconvience"),
+    ));
+  }
+}
+

@@ -95,7 +95,7 @@ class _ReviewsViewState extends State<ReviewsView> {
     return Row(
       children: <Widget>[
         Text(
-          text,
+          text??"",
           style: TextStyles.textStyleNormalSemiBold(fontSize: 16),
         ),
         Spacer(),
@@ -227,7 +227,7 @@ class _ReviewsViewState extends State<ReviewsView> {
     return Row(
       children: <Widget>[
         Text(
-          text,
+          text??"",
           style: TextStyles.textStyleHardBold(fontSize: 16),
         ),
         Spacer(),

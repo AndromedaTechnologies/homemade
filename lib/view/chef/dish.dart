@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:homemade/dropdownClass/course.dart';
 import 'package:homemade/dropdownClass/cuisine.dart';
@@ -10,8 +11,10 @@ import 'package:homemade/dropdownClass/spice.dart';
 import 'package:homemade/res/color.dart';
 import 'package:homemade/res/imagestring.dart';
 import 'package:homemade/res/size.dart';
+import 'package:homemade/res/stringapi.dart';
 import 'package:homemade/res/textFieldConditions.dart';
 import 'package:homemade/res/textStyle.dart';
+import 'package:homemade/server/GeneralAPI.dart';
 import 'package:homemade/widget/MultiSelectDropDown.dart';
 import 'package:homemade/widget/PopupTextField.dart';
 import 'package:homemade/widget/RoundedBorderButton.dart';
@@ -20,6 +23,7 @@ import 'package:homemade/widget/customDropDown.dart';
 import 'package:homemade/widget/loading.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:transparent_image/transparent_image.dart';
+import 'package:path/path.dart' as path;
 
 class DishAddUpdateView extends StatefulWidget {
   final bool isUpdate;
@@ -49,7 +53,6 @@ class _DishAddUpdateViewState extends State<DishAddUpdateView> {
   String dietaryInfo;
   String courseType;
   String spice;
-  String dishIngredient;
 
   bool submitDataLoading = false;
   bool showEditButton = true;
@@ -79,6 +82,10 @@ class _DishAddUpdateViewState extends State<DishAddUpdateView> {
     spiceList.forEach((item) {
       item.selected = false;
     });
+
+    itemNameController = TextEditingController();
+    priceController = TextEditingController();
+    descriptionController = TextEditingController();
   }
 
   @override
@@ -191,29 +198,29 @@ class _DishAddUpdateViewState extends State<DishAddUpdateView> {
         ),
         Expanded(
             child: SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              Container(
-                  margin: EdgeInsets.all(20),
-                  padding: EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                      color: MColor.white,
-                      borderRadius: BorderRadius.circular(5),
-                      boxShadow: [
-                        BoxShadow(
-                            color: MColor.lightGreyB6,
-                            offset: Offset(0, 4),
-                            blurRadius: 4.0,
-                            spreadRadius: 0)
-                      ]),
-                  child: _stepperCheck()),
-              _bottomButtons(),
-              SizedBox(
-                height: 20,
+              child: Column(
+                children: <Widget>[
+                  Container(
+                      margin: EdgeInsets.all(20),
+                      padding: EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                          color: MColor.white,
+                          borderRadius: BorderRadius.circular(5),
+                          boxShadow: [
+                            BoxShadow(
+                                color: MColor.lightGreyB6,
+                                offset: Offset(0, 4),
+                                blurRadius: 4.0,
+                                spreadRadius: 0)
+                          ]),
+                      child: _stepperCheck()),
+                  _bottomButtons(),
+                  SizedBox(
+                    height: 20,
+                  ),
+                ],
               ),
-            ],
-          ),
-        )),
+            )),
       ],
     );
   }
@@ -314,7 +321,10 @@ class _DishAddUpdateViewState extends State<DishAddUpdateView> {
           onChangeFun: (val) {
             setState(() {
               servingSize =
-                  servingList.where((item) => item.text == val).first.text;
+                  servingList
+                      .where((item) => item.text == val)
+                      .first
+                      .text;
             });
           },
         ),
@@ -323,12 +333,15 @@ class _DishAddUpdateViewState extends State<DishAddUpdateView> {
         ),
         CustomDropDown(
           hintText: "Cuisine Type",
-          selectedValue: courseType,
+          selectedValue: cuisineType,
           listData: cuisinesList.map((item) => item.text).toList(),
           onChangeFun: (val) {
             setState(() {
-              courseType =
-                  cuisinesList.where((item) => item.text == val).first.text;
+              cuisineType =
+                  cuisinesList
+                      .where((item) => item.text == val)
+                      .first
+                      .text;
             });
           },
         ),
@@ -342,7 +355,10 @@ class _DishAddUpdateViewState extends State<DishAddUpdateView> {
           onChangeFun: (val) {
             setState(() {
               dietaryInfo =
-                  dietaryList.where((item) => item.text == val).first.text;
+                  dietaryList
+                      .where((item) => item.text == val)
+                      .first
+                      .text;
             });
           },
         ),
@@ -356,7 +372,10 @@ class _DishAddUpdateViewState extends State<DishAddUpdateView> {
           onChangeFun: (val) {
             setState(() {
               courseType =
-                  courseList.where((item) => item.text == val).first.text;
+                  courseList
+                      .where((item) => item.text == val)
+                      .first
+                      .text;
             });
           },
         ),
@@ -376,7 +395,7 @@ class _DishAddUpdateViewState extends State<DishAddUpdateView> {
           onChange: (val) {},
           errorMessage: "Provide Item Description",
 //          focusNode: itemNameController,
-          controller: itemNameController,
+          controller: descriptionController,
           onSubmit: (val) {
 //            FocusScope.of(context).requestFocus();
             setState(() {});
@@ -420,7 +439,10 @@ class _DishAddUpdateViewState extends State<DishAddUpdateView> {
         onChangeFun: (val) {
           setState(() {
             spice =
-                spiceList.where((item) => item.text == val).first.text;
+                spiceList
+                    .where((item) => item.text == val)
+                    .first
+                    .text;
           });
         },
       ),
@@ -429,7 +451,7 @@ class _DishAddUpdateViewState extends State<DishAddUpdateView> {
       ),
       MultiSelectDropDown(
         label: "Serving time",
-        isUpdate: widget.isUpdate,showEditButton: showEditButton,
+        isUpdate: widget.isUpdate, showEditButton: showEditButton,
         productList: servingTimeList,
 
       ),
@@ -442,9 +464,9 @@ class _DishAddUpdateViewState extends State<DishAddUpdateView> {
         showEditButton: showEditButton,
         isUpdate: widget.isUpdate,
         dataList: dishIngredients,
-        deleteFun: (widget.isUpdate ? !showEditButton : true)?
+        deleteFun: (widget.isUpdate ? !showEditButton : true) ?
         _deletePopDialogItem
-            :null,
+            : null,
         labelDialog: "Ingredient",
         labelTextField: "Dish Ingredients",
         popDialog: _popDialog,
@@ -465,7 +487,10 @@ class _DishAddUpdateViewState extends State<DishAddUpdateView> {
           height: 20,
         ),
 
-        Text("Add image of your Dish to attrat Foodies. Images gives better idea of your dish.",textAlign: TextAlign.center,style: TextStyles.textStyleNormalGrey(fontSize: 14),),
+        Text(
+          "Add image of your Dish to attrat Foodies. Images gives better idea of your dish.",
+          textAlign: TextAlign.center,
+          style: TextStyles.textStyleNormalGrey(fontSize: 14),),
         SizedBox(
           height: 20,
         ),
@@ -478,11 +503,12 @@ class _DishAddUpdateViewState extends State<DishAddUpdateView> {
     return Wrap(
       spacing: 10,
       runSpacing: 10,
-      children: dishImages.map((file)=>_dishImage(file)).toList()..add(_dishAddImage()),
+      children: dishImages.map((file) => _dishImage(file)).toList()
+        ..add(_dishAddImage()),
     );
   }
 
-  Widget _dishImage(File file){
+  Widget _dishImage(File file) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(20),
       child: FadeInImage(
@@ -494,16 +520,16 @@ class _DishAddUpdateViewState extends State<DishAddUpdateView> {
     );
   }
 
-  Widget _dishAddImage(){
+  Widget _dishAddImage() {
     return InkWell(
       onTap: _addDishImage,
       child: Container(
         width: 120,
         height: 100,
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius:BorderRadius.circular(20),
-          border: Border.all(color: MColor.lightGreyB6,width: 1.3)
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: MColor.lightGreyB6, width: 1.3)
         ),
 
         child: Icon(
@@ -521,7 +547,7 @@ class _DishAddUpdateViewState extends State<DishAddUpdateView> {
         Expanded(
           flex: 7,
           child: Text(
-            heading,
+            heading ?? "",
             style: TextStyles.textStyleNormalDarkGreyBold(fontSize: 24),
           ),
         ),
@@ -547,29 +573,29 @@ class _DishAddUpdateViewState extends State<DishAddUpdateView> {
             currentIndex == 0
                 ? Container()
                 : Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: RoundedBorderButton(
-                        text: "Back",
-                        onTap: _backPressed,
-                        height: 50,
-                      ),
-                    ),
-                  ),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: RoundedBorderButton(
+                  text: "Back",
+                  onTap: _backPressed,
+                  height: 50,
+                ),
+              ),
+            ),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: submitDataLoading
                     ? Center(
-                        child: Loading(),
-                      )
+                  child: Loading(),
+                )
                     : RoundedBorderButton(
-                        text: currentIndex == totalIndexLength - 1
-                            ? "Submit"
-                            : "Next",
-                        onTap: _nextPressed,
-                        height: 50,
-                      ),
+                  text: currentIndex == totalIndexLength - 1
+                      ? "Submit"
+                      : "Next",
+                  onTap: _nextPressed,
+                  height: 50,
+                ),
               ),
             ),
           ],
@@ -585,7 +611,7 @@ class _DishAddUpdateViewState extends State<DishAddUpdateView> {
     switch (currentIndex) {
       case 0:
 
-        ///this scenario will not execute
+      ///this scenario will not execute
         setState(() {
           currentIndex--;
         });
@@ -612,16 +638,16 @@ class _DishAddUpdateViewState extends State<DishAddUpdateView> {
     switch (currentIndex) {
       case 0:
 //        if (_form1.currentState.validate()) {
-          setState(() {
-            currentIndex++;
-          });
+        setState(() {
+          currentIndex++;
+        });
 //        }
         break;
       case 1:
 //        if (_form2.currentState.validate()) {
-          setState(() {
-            currentIndex++;
-          });
+        setState(() {
+          currentIndex++;
+        });
 //        }
         break;
       case 2:
@@ -635,8 +661,7 @@ class _DishAddUpdateViewState extends State<DishAddUpdateView> {
     setState(() {});
   }
 
-  _deletePopDialogItem(text){
-
+  _deletePopDialogItem(text) {
     dishIngredients.remove(text);
     setState(() {});
   }
@@ -650,5 +675,58 @@ class _DishAddUpdateViewState extends State<DishAddUpdateView> {
   }
 
   ///Server
-  _submitToServerInsert() {}
+  _submitToServerInsert() async {
+    try {
+      FocusScope.of(context).requestFocus(FocusNode());
+//      setState(() {
+//        submitDataLoading = true;
+//      });
+
+      FormData form = FormData.fromMap({
+        "name": itemNameController.text,
+        "price": priceController.text,
+        "serving_size": servingSize,
+        "cusine_type": cuisineType,
+        "dietary_information": dietaryInfo,
+        "course_type": courseType,
+        "description": descriptionController.text,
+        "servingtime": servingTimeList.map((serving)=>serving.text).toList()
+      });
+
+      dishIngredients.forEach((ing){
+//        "ingredients": dishIngredients,
+        form.fields.add(MapEntry("ingredients[]", ing));
+      });
+
+      dishImages.forEach((file){
+        form.files.add(MapEntry(
+            "dishimages[]",
+            MultipartFile.fromFileSync(
+              file.path,
+              filename: path.basename(file.path),
+            )
+        ));
+      });
+
+      print(form.files.map((item)=>item.key).toList());
+
+      Response response = await API(_scaffoldKey)
+          .post(url: CHEF_ADD_DISH_URL, body: form, contentType: "multipart/form-data");
+
+
+      if(response.statusCode==200){
+        String message = response.data['message'];
+        Navigator.of(context).pop(message??"success");
+      }
+
+
+    }catch(e){
+    setState(() {
+    submitDataLoading = false;
+    });
+    print(e);
+
+    }
+
+  }
 }

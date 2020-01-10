@@ -10,3 +10,5 @@ const String CHEF_URL = API_URL + "chef";
 const String CHEF_REGISTER_URL = CHEF_URL + "/register";
 const String CHEF_UPDATE_URL = CHEF_URL + "/update";
 const String CHEF_UPDATE_IMAGE_URL = CHEF_URL + "/update/image";
+
+const String CHEF_ADD_DISH_URL = API_URL + "dish";

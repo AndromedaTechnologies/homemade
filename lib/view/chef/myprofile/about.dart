@@ -46,7 +46,7 @@ class _AboutViewState extends State<AboutView> {
 
   Widget _heading(String title) {
     return Text(
-      title,
+      title??"",
       style: TextStyles.textStyleHardBold(),
     );
   }
@@ -153,14 +153,14 @@ class _AboutViewState extends State<AboutView> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              title,
+              title??"",
               style: TextStyles.textStyleHardBoldGrey(fontSize: 14),
             ),
             SizedBox(
               height: 6,
             ),
             Text(
-              heading,
+              heading??"",
               style: TextStyles.textStyleHardBold(fontSize: 16),
             ),
           ],

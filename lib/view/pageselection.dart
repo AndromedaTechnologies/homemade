@@ -28,11 +28,15 @@ class _PageSelectionState extends State<PageSelection> {
       backgroundColor: Colors.white,
       key: UserInstance.instance.scaffoldKey,
       appBar: _appbarSelection(),
-      body: navigationBars[0].selected
-          ? MapView()
-          : navigationBars[1].selected ? NotificationView() : ProfileView(),
+      body: _body(),
       bottomNavigationBar: _bottomNavigationBar(navigationBars),
     );
+  }
+
+  Widget _body(){
+    return navigationBars[0].selected
+        ? MapView()
+        : navigationBars[1].selected ? NotificationView() : ProfileView();
   }
 
   Widget _appbarSelection() {

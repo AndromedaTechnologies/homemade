@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:homemade/error/snackbar.dart';
 import 'package:homemade/model/UserModel.dart';
 import 'package:homemade/model/chefDetailModel.dart';
 import 'package:homemade/model/loginModel.dart';
@@ -25,11 +26,11 @@ class _ProfileViewState extends State<ProfileView> {
 
 
   List<ProfileData> profileDataList = [
-    ProfileData(text: "Chef Settings", image: chefImage, ),
-    ProfileData(text: "My Dishes", image: dinnerImage, ),
+    ProfileData(text: "Chef Settings", image: chefImage,),
+    ProfileData(text: "My Dishes", image: dinnerImage,),
     ProfileData(text: "My Profile", image: manUserImage,),
     ProfileData(text: "My Orders", image: shoppingImage,),
-    ProfileData(text: "Settings", image: settingsImage, ),
+    ProfileData(text: "Settings", image: settingsImage,),
     ProfileData(text: "Sign Out", image: logoutImage),
   ];
 
@@ -37,7 +38,6 @@ class _ProfileViewState extends State<ProfileView> {
   void initState() {
     // TODO: implement initState
     super.initState();
-
   }
 
   @override
@@ -78,7 +78,9 @@ class _ProfileViewState extends State<ProfileView> {
           ),
           Center(
             child: Text(
-              UserInstance.instance.user.firstName + " " + UserInstance.instance.user.lastName,
+              (UserInstance?.instance?.user?.firstName ?? "") + " " +
+                  (UserInstance?.instance?.user?.lastName ?? ""),
+//              UserInstance.instance.user.firstName + " " + (UserInstance?.instance?.user?.lastName??""),
               style: TextStyles.textStyleHardBold(fontSize: 26),
             ),
           ),
@@ -97,9 +99,8 @@ class _ProfileViewState extends State<ProfileView> {
     );
   }
 
-  _becomeChef(){
-
-    return UserInstance.instance.user.role=="1"? Column(children: <Widget>[
+  _becomeChef() {
+    return UserInstance.instance.user.role == "1" ? Column(children: <Widget>[
       SizedBox(
         height: 15,
       ),
@@ -107,22 +108,26 @@ class _ProfileViewState extends State<ProfileView> {
       RoundedBorderButton(
         boldText: false,
         width: MySize.of(context).fitWidth(66),
-        text: "Become A Chef",borderRadius: 5,
+        text: "Become A Chef",
+        borderRadius: 5,
         height: 50,
-        onTap: (){
+        onTap: () {
           Navigator.of(context).push(
-              PageTransition(child: ChefRegisterUpdateView(), type: PageTransitionType.downToUp));
+              PageTransition(child: ChefRegisterUpdateView(),
+                  type: PageTransitionType.downToUp));
         },
       ),
 
       SizedBox(
         height: 15,
       ),
-    ],):Container();
+    ],) : Container();
   }
 
-  _listOfAction(){
-    List<ProfileData> data =  UserInstance.instance.user.role=="1"? profileDataList.getRange(3, profileDataList.length).toList() : profileDataList;
+  _listOfAction() {
+    List<ProfileData> data = UserInstance.instance.user.role == "1"
+        ? profileDataList.getRange(3, profileDataList.length).toList()
+        : profileDataList;
 
     return ListView.builder(
         padding: EdgeInsets.symmetric(horizontal: 20),
@@ -142,7 +147,9 @@ class _ProfileViewState extends State<ProfileView> {
       onTap: profileData.onTap,
       child: Container(
         height: 55,
-        color: (profileDataList.indexOf(profileData)+(UserInstance.instance.user.role=="1"?0:1))%2==0 ? Colors.white : MColor.lightGreyEC,
+        color: (profileDataList.indexOf(profileData) +
+            (UserInstance.instance.user.role == "1" ? 0 : 1)) % 2 == 0 ? Colors
+            .white : MColor.lightGreyEC,
         child: Row(
           children: <Widget>[
             Expanded(
@@ -160,13 +167,13 @@ class _ProfileViewState extends State<ProfileView> {
 //                  height: 35,
 //                  fit: BoxFit.contain,
 //                  image: AssetImage(profileData.image)),
-                ),
+            ),
             Expanded(
               flex: 7,
               child: Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    profileData.text,
+                    profileData?.text ?? "",
                     style: TextStyles.textStyleNormalSemiBold(),
                   )),
             ),
@@ -177,7 +184,7 @@ class _ProfileViewState extends State<ProfileView> {
   }
 
   _pageNavigationSelection(int index) {
-    index = index + ( UserInstance.instance.user.role=="1"?3:0);
+    index = index + (UserInstance.instance.user.role == "1" ? 3 : 0);
     print(index);
     Widget navigation;
     switch (index) {
@@ -192,23 +199,32 @@ class _ProfileViewState extends State<ProfileView> {
 
         break;
       case 3:
-
         break;
       case 4:
         break;
       case 5:
         LoginModel.signOut();
 
-        Navigator.of(context).popUntil((route)=>route.isFirst);
+        Navigator.of(context).popUntil((route) => route.isFirst);
         Navigator.of(context).pushReplacement(
-            PageTransition(child: LoginView(), type: PageTransitionType.downToUp));
+            PageTransition(
+                child: LoginView(), type: PageTransitionType.downToUp));
 
         break;
     }
 
     if (navigation != null)
-      Navigator.of(context).push(
-          PageTransition(child: navigation, type: PageTransitionType.downToUp));
+      Navigator.of(context)
+          .push(
+          PageTransition(child: navigation, type: PageTransitionType.downToUp))
+          .then((response) {
+        if (response != null)
+          CustomSnackBar.SnackBar_3Success(
+              UserInstance.instance.scaffoldKey, leadingIcon: Icons.check,
+              title: response == "success" ? index == 1
+                  ? "Dish Added Successfully"
+                  : "" :response);
+      });
   }
 }
 

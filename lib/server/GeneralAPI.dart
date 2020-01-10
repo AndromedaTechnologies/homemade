@@ -183,7 +183,7 @@ class API {
             },
             contentType: contentType!=null? contentType :null ,
             validateStatus: (status) {
-              return status < 500;
+              return status <= 500;
             },
           ));
 

@@ -317,11 +317,11 @@ class _RegisterViewState extends State<RegisterView> {
       errorMessage="";
     });
     if (_form.currentState.validate()) {
-      _RegisterUser();
+      _registerUser();
     }
   }
   ///Server Call
-  _RegisterUser() async {
+  _registerUser() async {
     print("HERE");
     FocusScope.of(context).requestFocus(FocusNode());
 

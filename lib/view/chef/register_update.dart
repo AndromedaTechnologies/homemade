@@ -986,7 +986,7 @@ class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
         Expanded(
           flex: 7,
           child: Text(
-            heading,
+            heading??"",
             style: TextStyles.textStyleNormalDarkGreyBold(fontSize: 24),
           ),
         ),
