@@ -1,19 +1,19 @@
 
 class DishImageModel {
   String id;
-  String dishimages;
+  String image;
 
-  DishImageModel({this.id, this.dishimages});
+  DishImageModel({this.id, this.image});
 
   DishImageModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    dishimages = json['dishimages'];
+    image = json['dishimages'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
-    data['dishimages'] = this.dishimages;
+    data['dishimages'] = this.image;
     return data;
   }
 }

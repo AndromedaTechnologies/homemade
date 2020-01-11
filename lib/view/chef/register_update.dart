@@ -25,6 +25,7 @@ import 'package:homemade/widget/PopupTextField.dart';
 import 'package:homemade/widget/RoundedBorderButton.dart';
 import 'package:homemade/widget/TextFieldClicked.dart';
 import 'package:homemade/widget/TextFieldWIthImage.dart';
+import 'package:homemade/widget/errorMessage.dart';
 import 'package:homemade/widget/loading.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -54,7 +55,7 @@ class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
   GlobalKey<FormState> _form4 = GlobalKey<FormState>();
 
   int currentIndex = 0;
-  int totalIndexLength = 4;
+  int totalIndexLength = 3;
 
   TextEditingController businessNameController;
   TextEditingController businessAddressController;
@@ -93,6 +94,8 @@ class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
   bool gettingDataLoading = false;
   bool showEditButton = true;
 
+  bool showCuisineError = false;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -110,7 +113,9 @@ class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
     experienceController = TextEditingController();
     pickUpLocationController = TextEditingController();
 
-    cuisinesList.forEach((cui){cui.selected=false;});
+    cuisinesList.forEach((cui) {
+      cui.selected = false;
+    });
 
     _tabController = new TabController(length: 3, vsync: this);
     _tabController.addListener(() {
@@ -591,11 +596,12 @@ class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
 
         MultiSelectDropDown(
           label: "Select Cuisine",
-          isUpdate: widget.isUpdate,showEditButton: showEditButton,
+          isUpdate: widget.isUpdate,
+          showEditButton: showEditButton,
           productList: cuisinesList,
-
+          okayButton: okayButton,
         ),
-
+        showCuisineError ? ErrorMessage("Please Select Cuisine") : Container(),
 
         SizedBox(
           height: 20,
@@ -652,14 +658,13 @@ class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
           showEditButton: showEditButton,
           isUpdate: widget.isUpdate,
           dataList: awardAndCertifications,
-          deleteFun: (widget.isUpdate ? !showEditButton : true)?
-            _deletePopDialogItem
-          :null,
+          deleteFun: (widget.isUpdate ? !showEditButton : true)
+              ? _deletePopDialogItem
+              : null,
           labelDialog: "Item",
-          labelTextField: "Awards and Certification",
+          labelTextField: "Awards and Certification (Opt.)",
           popDialog: _popDialog,
         ),
-
 
 //        InkWell(
 //          onTap:
@@ -751,13 +756,13 @@ class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
           enable: widget.isUpdate ? !showEditButton : true,
           onValidate: (val) {
             if (Condition.nonEmptyCondition(val)) {
-              return "Provide Government ID";
+              return "Provide Security/Passport number";
             }
             return null;
           },
           removeImageIcon: true,
           onChange: (val) {},
-          errorMessage: "Provide Government ID",
+          errorMessage: "Provide Security/Passport number",
           focusNode: governmentIDFocus,
           controller: governmentIDCNICController,
           onSubmit: (val) {
@@ -769,7 +774,7 @@ class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
           textInputType: TextInputType.number,
           action: TextInputAction.done,
           hint: "-",
-          label: "Government ID (CNIC)",
+          label: "Security/Passport number",
           imagePath: logoImage,
         ),
         SizedBox(
@@ -986,7 +991,7 @@ class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
         Expanded(
           flex: 7,
           child: Text(
-            heading??"",
+            heading ?? "",
             style: TextStyles.textStyleNormalDarkGreyBold(fontSize: 24),
           ),
         ),
@@ -1045,6 +1050,18 @@ class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
         }
         break;
       case 1:
+        if (!(cuisinesList.map((cuisine) => cuisine.selected).toList().length >
+            0)) {
+          setState(() {
+            showCuisineError = true;
+          });
+          return;
+        } else {
+          setState(() {
+            showCuisineError = false;
+          });
+        }
+
         if (_form2.currentState.validate()) {
           print(_professionalImage == null);
           setState(() {
@@ -1054,9 +1071,11 @@ class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
         break;
       case 2:
         if (_form3.currentState.validate()) {
-          setState(() {
-            currentIndex++;
-          });
+          _submitToServerInsert();
+
+//          setState(() {
+//            currentIndex++;
+//          });
         }
         break;
       case 3:
@@ -1072,17 +1091,21 @@ class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
     setState(() {});
   }
 
-  _deletePopDialogItem(text){
+  okayButton() {
+    Navigator.of(context).pop();
+    FocusScope.of(context).requestFocus(FocusNode());
+  }
 
-      awardAndCertifications.remove(text);
-      setState(() {});
+  _deletePopDialogItem(text) {
+    awardAndCertifications.remove(text);
+    setState(() {});
   }
 
   _callBackFromProfessionalImage(File file) {
     if (widget.isUpdate) {
       _professionalImage = file;
       _updateProfessionalImage();
-    }else
+    } else
       _professionalImage = file;
   }
 
@@ -1168,8 +1191,10 @@ class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
             filename: path.basename(backFileImage.path),
           )));
 
-      Response response = await API(_scaffoldKey)
-          .post(url: CHEF_REGISTER_URL, body: form, contentType: "multipart/form-data");
+      Response response = await API(_scaffoldKey).post(
+          url: CHEF_REGISTER_URL,
+          body: form,
+          contentType: "multipart/form-data");
 
       setState(() {
         submitDataLoading = false;
@@ -1202,8 +1227,6 @@ class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
         submitDataLoading = true;
       });
 
-
-
       Map map = {
         "business_name": businessNameController.text,
         "business_email": businessEmailController.text,
@@ -1222,9 +1245,15 @@ class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
         "bank_name": bankNameController.text
       };
 
-
-      map.addAll({"awards":awardAndCertifications.map((award)=>award).toList()});
-      map.addAll({"cuisines":cuisinesList.where((cusine) => cusine.selected).toList().map((cusine)=>cusine.text).toList()});
+      map.addAll(
+          {"awards": awardAndCertifications.map((award) => award).toList()});
+      map.addAll({
+        "cuisines": cuisinesList
+            .where((cusine) => cusine.selected)
+            .toList()
+            .map((cusine) => cusine.text)
+            .toList()
+      });
 
 //      form.addEntries(
 //          awardAndCertifications.map((award) => MapEntry("awards[]", award)));
@@ -1239,10 +1268,10 @@ class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
 //        print("${entry.key} ${entry.value}");
 //      });
 
-
-
-      Response response = await API(_scaffoldKey)
-          .put(url: CHEF_UPDATE_URL, body: map, contentType: "application/x-www-form-urlencoded");
+      Response response = await API(_scaffoldKey).put(
+          url: CHEF_UPDATE_URL,
+          body: map,
+          contentType: "application/x-www-form-urlencoded");
 
       setState(() {
         submitDataLoading = false;
@@ -1268,7 +1297,7 @@ class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
     }
   }
 
-  _updateProfessionalImage() async{
+  _updateProfessionalImage() async {
     try {
       setState(() {
         submitDataLoading = true;
@@ -1276,11 +1305,7 @@ class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
 
       print(_professionalImage.path);
 
-      FormData form = FormData.fromMap({
-
-      });
-
-
+      FormData form = FormData.fromMap({});
 
       form.files.add(MapEntry(
           "business_image",
@@ -1289,26 +1314,22 @@ class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
             filename: path.basename(_professionalImage.path),
           )));
 
-
-
-      Response response = await API(_scaffoldKey)
-          .post(url: CHEF_UPDATE_IMAGE_URL, body: form, contentType: "multipart/form-data");
+      Response response = await API(_scaffoldKey).post(
+          url: CHEF_UPDATE_IMAGE_URL,
+          body: form,
+          contentType: "multipart/form-data");
 
       setState(() {
         submitDataLoading = false;
       });
 
       if (response != null) {
-
-
         ///Fetch User Again
         //
         UserInstance.instance.dispatch(ReloadUserData());
-
-      }else{
+      } else {
         setState(() {
-          _professionalImage=null;
-
+          _professionalImage = null;
         });
       }
     } catch (e) {
@@ -1319,5 +1340,3 @@ class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
     }
   }
 }
-
-

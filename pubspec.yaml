@@ -60,6 +60,7 @@ flutter:
    - assets/logo.png
    - assets/splash.png
    - assets/food.jpg
+   - assets/notavailable.jpg
    - assets/input/chef.png
    - assets/input/dinner.png
    - assets/input/heart.png

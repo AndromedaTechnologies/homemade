@@ -57,7 +57,7 @@ class DishModel {
     if (json['servingtime'] != null) {
       servingtime = new List<String>();
       json['servingtime'].forEach((v) {
-        servingtime.add(v);
+        servingtime.add(v['servingtime']);
       });
     }else{
       servingtime = new List<String>();

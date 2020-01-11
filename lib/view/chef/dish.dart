@@ -711,7 +711,7 @@ class _DishAddUpdateViewState extends State<DishAddUpdateView> {
       print(form.files.map((item)=>item.key).toList());
 
       Response response = await API(_scaffoldKey)
-          .post(url: CHEF_ADD_DISH_URL, body: form, contentType: "multipart/form-data");
+          .post(url: CHEF_DISH_URL, body: form, contentType: "multipart/form-data");
 
 
       if(response.statusCode==200){

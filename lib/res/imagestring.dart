@@ -2,6 +2,7 @@
 final String logoImage = "assets/logo.png";
 final String walkThroughImage = "assets/splash.png";
 final String foodImage = "assets/food.jpg";
+final String notAvailableImage = "assets/notavailable.jpg";
 final String chefImage = "assets/input/chef.png";
 final String dinnerImage = "assets/input/dinner.png";
 final String heartImage = "assets/input/heart.png";

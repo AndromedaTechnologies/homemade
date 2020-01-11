@@ -11,15 +11,18 @@ class MultiSelectDropDown extends StatefulWidget {
   final bool showEditButton;
   final String label;
   final dynamic productList;
+  final Function okayButton;
 
   MultiSelectDropDown(
-      {this.isUpdate, this.showEditButton, this.label, this.productList});
+      {this.isUpdate, this.showEditButton, this.label, this.productList, this.okayButton});
 
   @override
   _MultiSelectDropDownState createState() => _MultiSelectDropDownState();
 }
 
 class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
+
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -56,7 +59,10 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
                     product: value,
                     state: this,
                   ));
-            }).toList(),
+            }).toList()..add(DropdownMenuItem<dynamic>(
+                value: "other",
+                child: _okayButton())
+            )
           ),
           Center(
             child: Container(
@@ -82,6 +88,22 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
         ],
       ),
     );
+  }
+
+  Widget _okayButton(){
+    return widget.okayButton!=null? Row(
+      children: <Widget>[
+        Spacer(),
+        FlatButton(
+            onPressed: widget.okayButton,
+            color: MColor.application,
+            child: Text(
+              "Okay".toUpperCase(),
+              style: TextStyles.textStyleBoldWhite(
+                  fontSize: 16, spacing: 0.4),
+            ))
+      ],
+    ):Container();
   }
 
   List<Widget> selectedProducts() {
