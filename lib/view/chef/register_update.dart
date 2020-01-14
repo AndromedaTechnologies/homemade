@@ -68,6 +68,8 @@ class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
   TextEditingController ibanController;
   TextEditingController bankNameController;
 
+  TextEditingController chefDescriptionController;
+
   FocusNode businessNameFocus = FocusNode();
   FocusNode businessAddressFocus = FocusNode();
   FocusNode businessCityFocus = FocusNode();
@@ -78,6 +80,8 @@ class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
   FocusNode governmentIDFocus = FocusNode();
   FocusNode ibanFocus = FocusNode();
   FocusNode bankNameFocus = FocusNode();
+
+  FocusNode chefRegistrationFocus = FocusNode();
 
   FocusNode experienceFocus = FocusNode();
 
@@ -112,6 +116,7 @@ class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
     bankNameController = TextEditingController();
     experienceController = TextEditingController();
     pickUpLocationController = TextEditingController();
+    chefDescriptionController = TextEditingController();
 
     cuisinesList.forEach((cui) {
       cui.selected = false;
@@ -156,6 +161,8 @@ class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
         awardAndCertifications.addAll(
             chefDetailModel.awards.map((award) => award.award).toList());
 //        cuisinesList.addAll(chefDetailModel.cuisines.map((cuisine)=>Cuisine()).toList());
+
+        chefDescriptionController.text = chefDetailModel.chef.chefDescription;
 
         cuisinesList.forEach((cuisine) {
           cuisine.selected = chefDetailModel.cuisines
@@ -629,6 +636,34 @@ class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
           label: "Experience",
           isSuffixLabel: true,
           suffixLabel: "Month",
+        ),
+        SizedBox(
+          height: 20,
+        ),
+        TextFieldWithImage(
+          enable: widget.isUpdate ? !showEditButton : true,
+          onValidate: (val) {
+            if (Condition.nonEmptyCondition(val)) {
+              return "Provide Chef Description";
+            }
+            return null;
+          },
+          removeImageIcon: true,
+          isMultiLine: true,
+          onChange: (val) {},
+          errorMessage: "Provide Chef Description",
+//          focusNode: itemNameController,
+          controller: chefDescriptionController,
+          onSubmit: (val) {
+//            FocusScope.of(context).requestFocus();
+            setState(() {});
+          },
+          width: MySize.of(context).fitWidth(80),
+          obscureText: false,
+          textInputType: TextInputType.text,
+          action: TextInputAction.next,
+          hint: "-",
+          label: "Chef Description",
         ),
         SizedBox(
           height: 20,
@@ -1152,8 +1187,8 @@ class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
         "city": businessCityController.text,
         "state": businessStateController.text,
         "postal_code": businessPostalCodeController.text,
-        "chef_description": "Comming Soon",
-        "pickup_location": "Abbottabad",
+        "chef_description": chefDescriptionController.text,
+        "pickup_location": "Pakistan",
         "latitude": "73.2407907",
         "longitude": "73.2407907",
         "business_address": businessAddressController.text,
@@ -1235,8 +1270,8 @@ class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
         "city": businessCityController.text,
         "state": businessStateController.text,
         "postal_code": businessPostalCodeController.text,
-        "chef_description": "Comming Soon",
-        "pickup_location": "Abbottabad",
+        "chef_description": chefDescriptionController.text,
+        "pickup_location": "Pakistan",
         "latitude": "73.2407907",
         "longitude": "73.2407907",
         "business_address": businessAddressController.text,

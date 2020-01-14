@@ -1,4 +1,9 @@
 
+import 'package:homemade/model/awardModel.dart';
+
+import 'cuisineModel.dart';
+import 'dishModel.dart';
+
 class ChefModel {
   int id;
   String businessName;
@@ -20,6 +25,13 @@ class ChefModel {
   String userId;
   String createdAt;
   String updatedAt;
+
+
+  ///In case of My Profile
+  List<Cuisines> cuisines;
+  List<AwardModel> awards;
+  List<DishModel> dishes;
+
 
   ChefModel(
       {this.id,
@@ -57,6 +69,33 @@ class ChefModel {
     cnic = json['cnic']??"";
     iban = json['iban']??"";
     bankName = json['bank_name']??"";
+
+
+    if (json['awards'] != null) {
+      awards = new List<AwardModel>();
+      json['awards'].forEach((v) {
+        awards.add(new AwardModel.fromJson(v));
+      });
+    }else{
+      awards = new List<AwardModel>();
+    }
+    if (json['cuisines'] != null) {
+      cuisines = new List<Cuisines>();
+      json['cuisines'].forEach((v) {
+        cuisines.add(new Cuisines.fromJson(v));
+      });
+    }else{
+      cuisines = new List<Cuisines>();
+    }
+
+    if (json['dishes'] != null) {
+      dishes = new List<DishModel>();
+      json['dishes'].forEach((v) {
+        dishes.add(new DishModel.fromJson(v));
+      });
+    }else{
+      dishes = new List<DishModel>();
+    }
     
   }
 

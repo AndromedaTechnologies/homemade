@@ -4,7 +4,7 @@ import 'cuisineModel.dart';
 
 class ChefDetailModel {
   ChefModel chef;
-  List<Awards> awards;
+  List<AwardModel> awards;
   List<Cuisines> cuisines;
 
   ChefDetailModel({this.chef, this.awards, this.cuisines});
@@ -15,12 +15,12 @@ class ChefDetailModel {
   ChefDetailModel.fromJson(Map<String, dynamic> json) {
     chef = json['chef'] != null ? new ChefModel.fromJson(json['chef']) : null;
     if (json['awards'] != null) {
-      awards = new List<Awards>();
+      awards = new List<AwardModel>();
       json['awards'].forEach((v) {
-        awards.add(new Awards.fromJson(v));
+        awards.add(new AwardModel.fromJson(v));
       });
     }else{
-      awards = new List<Awards>();
+      awards = new List<AwardModel>();
     }
     if (json['cuisines'] != null) {
       cuisines = new List<Cuisines>();

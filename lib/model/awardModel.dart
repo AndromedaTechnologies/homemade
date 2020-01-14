@@ -1,10 +1,10 @@
 
-class Awards {
+class AwardModel {
   String award;
 
-  Awards({this.award});
+  AwardModel({this.award});
 
-  Awards.fromJson(Map<String, dynamic> json) {
+  AwardModel.fromJson(Map<String, dynamic> json) {
     award = json['award'];
   }
 

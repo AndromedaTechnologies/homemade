@@ -5,13 +5,14 @@ class DishModel {
   String name;
   String price;
   String servingSize;
-  String cusineType;
+  String cuisineType;
   String dietaryInformation;
   String courseType;
   String description;
   String chefId;
   String createdAt;
   String updatedAt;
+
   List<String> ingredients;
   List<String> servingtime;
   List<DishImageModel> dishimages;
@@ -22,7 +23,7 @@ class DishModel {
         this.name,
         this.price,
         this.servingSize,
-        this.cusineType,
+        this.cuisineType,
         this.dietaryInformation,
         this.courseType,
         this.description,
@@ -39,7 +40,7 @@ class DishModel {
     name = json['name'];
     price = json['price'];
     servingSize = json['serving_size'];
-    cusineType = json['cusine_type'];
+    cuisineType = json['cuisine_type'];
     dietaryInformation = json['dietary_information'];
     courseType = json['course_type'];
     description = json['description'];
@@ -82,7 +83,7 @@ class DishModel {
     data['name'] = this.name;
     data['price'] = this.price;
     data['serving_size'] = this.servingSize;
-    data['cusine_type'] = this.cusineType;
+    data['cuisine_type'] = this.cuisineType;
     data['dietary_information'] = this.dietaryInformation;
     data['course_type'] = this.courseType;
     data['description'] = this.description;

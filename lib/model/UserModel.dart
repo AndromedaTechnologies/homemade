@@ -1,5 +1,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'chefModel.dart';
+
 
 class UserModel {
   int id;
@@ -14,6 +16,9 @@ class UserModel {
   String dateOfBirth;
   String role;
   String gender;
+
+  ///InCase of MyProfile
+  ChefModel chef;
 
   UserModel(
       {this.id,
@@ -67,6 +72,9 @@ class UserModel {
     dateOfBirth = json['date_of_birth'];
     role = json['role'];
     gender = json['gender'];
+
+    chef = json['chef'] != null ? new ChefModel.fromJson(json['chef']) : null;
+
   }
 
   Map<String, dynamic> toJson() {

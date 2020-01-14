@@ -56,6 +56,7 @@ class _DishAddUpdateViewState extends State<DishAddUpdateView> {
 
   bool submitDataLoading = false;
   bool showEditButton = true;
+  bool dropDownError = false;
 
   List<String> dishIngredients = [];
   List<File> dishImages = [];
@@ -198,29 +199,29 @@ class _DishAddUpdateViewState extends State<DishAddUpdateView> {
         ),
         Expanded(
             child: SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  Container(
-                      margin: EdgeInsets.all(20),
-                      padding: EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                          color: MColor.white,
-                          borderRadius: BorderRadius.circular(5),
-                          boxShadow: [
-                            BoxShadow(
-                                color: MColor.lightGreyB6,
-                                offset: Offset(0, 4),
-                                blurRadius: 4.0,
-                                spreadRadius: 0)
-                          ]),
-                      child: _stepperCheck()),
-                  _bottomButtons(),
-                  SizedBox(
-                    height: 20,
-                  ),
-                ],
+          child: Column(
+            children: <Widget>[
+              Container(
+                  margin: EdgeInsets.all(20),
+                  padding: EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                      color: MColor.white,
+                      borderRadius: BorderRadius.circular(5),
+                      boxShadow: [
+                        BoxShadow(
+                            color: MColor.lightGreyB6,
+                            offset: Offset(0, 4),
+                            blurRadius: 4.0,
+                            spreadRadius: 0)
+                      ]),
+                  child: _stepperCheck()),
+              _bottomButtons(),
+              SizedBox(
+                height: 20,
               ),
-            )),
+            ],
+          ),
+        )),
       ],
     );
   }
@@ -317,14 +318,13 @@ class _DishAddUpdateViewState extends State<DishAddUpdateView> {
         CustomDropDown(
           hintText: "Serving size",
           selectedValue: servingSize,
+          hasError: dropDownError && servingSize == null,
+          errorText: "Please Select Serving Size",
           listData: servingList.map((item) => item.text).toList(),
           onChangeFun: (val) {
             setState(() {
               servingSize =
-                  servingList
-                      .where((item) => item.text == val)
-                      .first
-                      .text;
+                  servingList.where((item) => item.text == val).first.text;
             });
           },
         ),
@@ -334,14 +334,13 @@ class _DishAddUpdateViewState extends State<DishAddUpdateView> {
         CustomDropDown(
           hintText: "Cuisine Type",
           selectedValue: cuisineType,
+          hasError: dropDownError && cuisineType == null,
+          errorText: "Please Select Cuisine type",
           listData: cuisinesList.map((item) => item.text).toList(),
           onChangeFun: (val) {
             setState(() {
               cuisineType =
-                  cuisinesList
-                      .where((item) => item.text == val)
-                      .first
-                      .text;
+                  cuisinesList.where((item) => item.text == val).first.text;
             });
           },
         ),
@@ -351,14 +350,13 @@ class _DishAddUpdateViewState extends State<DishAddUpdateView> {
         CustomDropDown(
           hintText: "Dietary Info",
           selectedValue: dietaryInfo,
+          hasError: dropDownError && dietaryInfo == null,
+          errorText: "Please Select Dietry Info",
           listData: dietaryList.map((item) => item.text).toList(),
           onChangeFun: (val) {
             setState(() {
               dietaryInfo =
-                  dietaryList
-                      .where((item) => item.text == val)
-                      .first
-                      .text;
+                  dietaryList.where((item) => item.text == val).first.text;
             });
           },
         ),
@@ -368,14 +366,13 @@ class _DishAddUpdateViewState extends State<DishAddUpdateView> {
         CustomDropDown(
           hintText: "Course Type",
           selectedValue: courseType,
+          hasError: dropDownError && courseType == null,
+          errorText: "Please Select Course Type",
           listData: courseList.map((item) => item.text).toList(),
           onChangeFun: (val) {
             setState(() {
               courseType =
-                  courseList
-                      .where((item) => item.text == val)
-                      .first
-                      .text;
+                  courseList.where((item) => item.text == val).first.text;
             });
           },
         ),
@@ -430,53 +427,57 @@ class _DishAddUpdateViewState extends State<DishAddUpdateView> {
   }
 
   Widget _disInformation_2() {
-    return Column(children: <Widget>[
-
-      CustomDropDown(
-        hintText: "Spice",
-        selectedValue: spice,
-        listData: spiceList.map((item) => item.text).toList(),
-        onChangeFun: (val) {
-          setState(() {
-            spice =
-                spiceList
-                    .where((item) => item.text == val)
-                    .first
-                    .text;
-          });
-        },
-      ),
-      SizedBox(
-        height: 20,
-      ),
-      MultiSelectDropDown(
-        label: "Serving time",
-        isUpdate: widget.isUpdate, showEditButton: showEditButton,
-        productList: servingTimeList,
-
-      ),
-
-      SizedBox(
-        height: 20,
-      ),
-
-      PopupTextField(
-        showEditButton: showEditButton,
-        isUpdate: widget.isUpdate,
-        dataList: dishIngredients,
-        deleteFun: (widget.isUpdate ? !showEditButton : true) ?
-        _deletePopDialogItem
-            : null,
-        labelDialog: "Ingredient",
-        labelTextField: "Dish Ingredients",
-        popDialog: _popDialog,
-      ),
-
-      SizedBox(
-        height: 20,
-      ),
-
-    ],);
+    return Column(
+      children: <Widget>[
+        CustomDropDown(
+          hintText: "Spice",
+          selectedValue: spice,
+          errorText: "Please Select Spice",
+          hasError: dropDownError && spice == null,
+          listData: spiceList.map((item) => item.text).toList(),
+          onChangeFun: (val) {
+            setState(() {
+              spice = spiceList.where((item) => item.text == val).first.text;
+            });
+          },
+        ),
+        SizedBox(
+          height: 20,
+        ),
+        MultiSelectDropDown(
+          label: "Serving time",
+          isUpdate: widget.isUpdate,
+          showEditButton: showEditButton,
+          productList: servingTimeList,
+          hasError: dropDownError &&
+              servingTimeList.where((serv) => serv.selected).toList().length == 0,
+          errorText: "Please Select Serving Time",
+          okayButton: () {
+            Navigator.of(context).pop();
+            FocusScope.of(context).requestFocus(FocusNode());
+          },
+        ),
+        SizedBox(
+          height: 20,
+        ),
+        PopupTextField(
+          showEditButton: showEditButton,
+          isUpdate: widget.isUpdate,
+          hasError: dropDownError && dishIngredients.length == 0,
+          errorText: "Please Add Ingredient",
+          dataList: dishIngredients,
+          deleteFun: (widget.isUpdate ? !showEditButton : true)
+              ? _deletePopDialogItem
+              : null,
+          labelDialog: "Ingredient",
+          labelTextField: "Dish Ingredients",
+          popDialog: _popDialog,
+        ),
+        SizedBox(
+          height: 20,
+        ),
+      ],
+    );
   }
 
   Widget _stepperThree() {
@@ -486,11 +487,11 @@ class _DishAddUpdateViewState extends State<DishAddUpdateView> {
         SizedBox(
           height: 20,
         ),
-
         Text(
           "Add image of your Dish to attrat Foodies. Images gives better idea of your dish.",
           textAlign: TextAlign.center,
-          style: TextStyles.textStyleNormalGrey(fontSize: 14),),
+          style: TextStyles.textStyleNormalGrey(fontSize: 14),
+        ),
         SizedBox(
           height: 20,
         ),
@@ -529,9 +530,7 @@ class _DishAddUpdateViewState extends State<DishAddUpdateView> {
         decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: MColor.lightGreyB6, width: 1.3)
-        ),
-
+            border: Border.all(color: MColor.lightGreyB6, width: 1.3)),
         child: Icon(
           Icons.add_photo_alternate,
           color: MColor.application,
@@ -573,29 +572,29 @@ class _DishAddUpdateViewState extends State<DishAddUpdateView> {
             currentIndex == 0
                 ? Container()
                 : Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: RoundedBorderButton(
-                  text: "Back",
-                  onTap: _backPressed,
-                  height: 50,
-                ),
-              ),
-            ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: RoundedBorderButton(
+                        text: "Back",
+                        onTap: _backPressed,
+                        height: 50,
+                      ),
+                    ),
+                  ),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: submitDataLoading
                     ? Center(
-                  child: Loading(),
-                )
+                        child: Loading(),
+                      )
                     : RoundedBorderButton(
-                  text: currentIndex == totalIndexLength - 1
-                      ? "Submit"
-                      : "Next",
-                  onTap: _nextPressed,
-                  height: 50,
-                ),
+                        text: currentIndex == totalIndexLength - 1
+                            ? "Submit"
+                            : "Next",
+                        onTap: _nextPressed,
+                        height: 50,
+                      ),
               ),
             ),
           ],
@@ -611,7 +610,7 @@ class _DishAddUpdateViewState extends State<DishAddUpdateView> {
     switch (currentIndex) {
       case 0:
 
-      ///this scenario will not execute
+        ///this scenario will not execute
         setState(() {
           currentIndex--;
         });
@@ -635,25 +634,53 @@ class _DishAddUpdateViewState extends State<DishAddUpdateView> {
   }
 
   _nextPressed() {
+    setState(() {
+      dropDownError = false;
+    });
     switch (currentIndex) {
       case 0:
-//        if (_form1.currentState.validate()) {
-        setState(() {
-          currentIndex++;
-        });
-//        }
+        if (_form1.currentState.validate()) {
+          if (_validateDropDown()) {
+            setState(() {
+              currentIndex++;
+            });
+          } else {
+            setState(() {
+              dropDownError = true;
+            });
+          }
+        }
         break;
       case 1:
-//        if (_form2.currentState.validate()) {
-        setState(() {
-          currentIndex++;
-        });
-//        }
+        if (_form2.currentState.validate()) {
+          if (_validateDropDown2()) {
+            setState(() {
+              currentIndex++;
+            });
+          } else {
+            setState(() {
+              dropDownError = true;
+            });
+          }
+        }
         break;
       case 2:
         _submitToServerInsert();
         break;
     }
+  }
+
+  _validateDropDown() {
+    return !(servingSize == null ||
+        cuisineType == null ||
+        dietaryInfo == null ||
+        courseType == null);
+  }
+
+  _validateDropDown2() {
+    return !(spice == null ||
+        servingTimeList.map((serv) => serv.selected).toList().length == 0 ||
+        dishIngredients.length == 0);
   }
 
   _popDialog(List<String> ingredient) {
@@ -667,7 +694,9 @@ class _DishAddUpdateViewState extends State<DishAddUpdateView> {
   }
 
   _addDishImage() async {
-    var image = await ImagePicker.pickImage(source: ImageSource.gallery,);
+    var image = await ImagePicker.pickImage(
+      source: ImageSource.gallery,
+    );
     if (image != null) {
       dishImages.add(image);
       setState(() {});
@@ -678,55 +707,52 @@ class _DishAddUpdateViewState extends State<DishAddUpdateView> {
   _submitToServerInsert() async {
     try {
       FocusScope.of(context).requestFocus(FocusNode());
-//      setState(() {
-//        submitDataLoading = true;
-//      });
+      setState(() {
+        submitDataLoading = true;
+      });
 
       FormData form = FormData.fromMap({
         "name": itemNameController.text,
         "price": priceController.text,
         "serving_size": servingSize,
-        "cusine_type": cuisineType,
+        "cuisine_type": cuisineType,
         "dietary_information": dietaryInfo,
         "course_type": courseType,
         "description": descriptionController.text,
-        "servingtime": servingTimeList.map((serving)=>serving.text).toList()
+        "servingtime": servingTimeList.map((serving) => serving.text).toList()
       });
 
-      dishIngredients.forEach((ing){
+      dishIngredients.forEach((ing) {
 //        "ingredients": dishIngredients,
         form.fields.add(MapEntry("ingredients[]", ing));
       });
 
-      dishImages.forEach((file){
+      dishImages.forEach((file) {
         form.files.add(MapEntry(
             "dishimages[]",
             MultipartFile.fromFileSync(
               file.path,
               filename: path.basename(file.path),
-            )
-        ));
+            )));
       });
 
-      print(form.files.map((item)=>item.key).toList());
+      print(form.files.map((item) => item.key).toList());
 
-      Response response = await API(_scaffoldKey)
-          .post(url: CHEF_DISH_URL, body: form, contentType: "multipart/form-data");
+      Response response = await API(_scaffoldKey).post(
+          url: CHEF_DISH_URL, body: form, contentType: "multipart/form-data");
 
 
-      if(response.statusCode==200){
+      if (response.statusCode == 200) {
         String message = response.data['message'];
-        Navigator.of(context).pop(message??"success");
+        Navigator.of(context).pop(message ?? "success");
+      }else{
+        throw Exception();
       }
-
-
-    }catch(e){
-    setState(() {
-    submitDataLoading = false;
-    });
-    print(e);
-
+    } catch (e) {
+      setState(() {
+        submitDataLoading = false;
+      });
+      print(e);
     }
-
   }
 }

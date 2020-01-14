@@ -4,10 +4,8 @@ import 'package:homemade/model/dishModel.dart';
 import 'package:homemade/res/color.dart';
 import 'package:homemade/res/imagestring.dart';
 import 'package:homemade/res/textStyle.dart';
-import 'package:homemade/stream/dish/event.dart';
-import 'package:homemade/stream/dish/state.dart';
-import 'package:homemade/stream/dish/stream.dart';
-import 'package:homemade/widget/loading.dart';
+import 'package:homemade/stream/myprofile/state.dart';
+import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:transparent_image/transparent_image.dart';
 
@@ -17,58 +15,23 @@ class MyDishesView extends StatefulWidget {
 }
 
 class _MyDishesViewState extends State<MyDishesView> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-
-  DishStream stream;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    stream = DishStream(_scaffoldKey);
-    stream.dispatch(FetchMultipleData());
-
-    Future.delayed(Duration.zero, () {
-    });
-  }
-
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-
-  }
-
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-        stream: stream.dishStream,
-        builder: (context, snapshot) {
+    MyProfileState profileState = Provider.of<MyProfileState>(context);
 
-          var dishState = snapshot.data;
+    if (profileState is DataLoadingState) {
+      return shimmerWidget();
+    }
 
-          if (snapshot.hasError || dishState is ErrorState) {
-            return Center(child: Text("Error while Processing Request"));
-          }
-
-          print(dishState);
-          if (!snapshot.hasData || dishState is DataLoadingState) {
-//          if (true) {
-            return shimmerWidget();
-          }
-
-          if (dishState is DataFetchedState) {
-            if (!dishState.hasData) {
-              return Center(child: Text("No Data Found"));
-            }
-          }
-
-          return ListView.builder(
-              itemCount: dishState.listDishes.length,
-              itemBuilder: (context, index) {
-                return dishWidget(dishState.listDishes[index]);
-              });
-        });
+    if (profileState is DataFetchedState) {
+      return ListView.builder(
+          itemCount:
+              profileState?.myProfileModel?.user?.chef?.dishes?.length ?? 0,
+          itemBuilder: (context, index) {
+            return dishWidget(
+                profileState.myProfileModel.user.chef.dishes[index]);
+          });
+    }
   }
 
   Widget dishWidget(DishModel dish) {
@@ -168,132 +131,136 @@ class _MyDishesViewState extends State<MyDishesView> {
     );
   }
 
-  Widget shimmerWidget(){
+  Widget shimmerWidget() {
     Color baseColor = Colors.grey[300];
     Color highlightColor = Colors.grey[100];
-    return ListView.builder(itemCount: 4,itemBuilder: (context,index){
-      return Container(
-        margin: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-        decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(color: MColor.lightGreyB6),
-            boxShadow: [
-              BoxShadow(
-                  color: MColor.lightGreyB6,
-                  offset: Offset(0, 2),
-                  blurRadius: 3,
-                  spreadRadius: 0)
-            ]),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            SizedBox(
-              height: 160,
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Shimmer.fromColors(
-                      baseColor: baseColor,
-                      highlightColor: highlightColor,
-                      child: Container(
-                        width: double.infinity,
-                        color: Colors.white,
-                        height: double.infinity,
+    return ListView.builder(
+        itemCount: 4,
+        itemBuilder: (context, index) {
+          return Container(
+            margin: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+            decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(color: MColor.lightGreyB6),
+                boxShadow: [
+                  BoxShadow(
+                      color: MColor.lightGreyB6,
+                      offset: Offset(0, 2),
+                      blurRadius: 3,
+                      spreadRadius: 0)
+                ]),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                SizedBox(
+                  height: 160,
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: Shimmer.fromColors(
+                          baseColor: baseColor,
+                          highlightColor: highlightColor,
+                          child: Container(
+                            width: double.infinity,
+                            color: Colors.white,
+                            height: double.infinity,
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 15),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Row(
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 15),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
-                              Shimmer.fromColors(
-                                baseColor: baseColor,
-                                highlightColor: highlightColor,
-                                child: Image.asset(
-                                  starImage,
-                                  height: 20,
-                                  width: 20,
-                                  fit: BoxFit.contain,
-                                ),
+                              Row(
+                                children: <Widget>[
+                                  Shimmer.fromColors(
+                                    baseColor: baseColor,
+                                    highlightColor: highlightColor,
+                                    child: Image.asset(
+                                      starImage,
+                                      height: 20,
+                                      width: 20,
+                                      fit: BoxFit.contain,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  Shimmer.fromColors(
+                                    baseColor: baseColor,
+                                    highlightColor: highlightColor,
+                                    child: Text(
+                                      "5.0",
+                                      style: TextStyles.textStyleStarBold(
+                                          fontSize: 16),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  Shimmer.fromColors(
+                                    baseColor: baseColor,
+                                    highlightColor: highlightColor,
+                                    child: Text(
+                                      "(0)",
+                                      style: TextStyles.textStyleBoldGrey(
+                                          fontSize: 16),
+                                    ),
+                                  ),
+                                  Spacer(),
+                                  Shimmer.fromColors(
+                                    baseColor: baseColor,
+                                    highlightColor: highlightColor,
+                                    child: Image.asset(
+                                      heartBorderImage,
+                                      height: 30,
+                                      width: 30,
+                                      fit: BoxFit.contain,
+                                    ),
+                                  ),
+                                ],
                               ),
-
-
                               SizedBox(
-                                width: 5,
+                                height: 10,
                               ),
                               Shimmer.fromColors(
                                 baseColor: baseColor,
                                 highlightColor: highlightColor,
                                 child: Text(
-                                  "5.0",
-                                  style: TextStyles.textStyleStarBold(fontSize: 16),
-                                ),
-                              ),
-                              SizedBox(
-                                width: 5,
-                              ),
-                              Shimmer.fromColors(
-                                baseColor: baseColor,
-                                highlightColor: highlightColor,
-                                child: Text(
-                                  "(0)",
-                                  style: TextStyles.textStyleBoldGrey(fontSize: 16),
+                                  "                ",
+                                  style: TextStyles
+                                      .textStyleNormalDarkGreySemiBold(
+                                          fontSize: 14),
                                 ),
                               ),
                               Spacer(),
-                              Shimmer.fromColors(
-                                baseColor: baseColor,
-                                highlightColor: highlightColor,
-                                child: Image.asset(
-                                  heartBorderImage,
-                                  height: 30,
-                                  width: 30,
-                                  fit: BoxFit.contain,
-                                ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: <Widget>[
+                                  Shimmer.fromColors(
+                                    baseColor: baseColor,
+                                    highlightColor: highlightColor,
+                                    child: Text(
+                                      "\$ 000",
+                                      style: TextStyles.textStyleHardBold(
+                                          fontSize: 16),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Shimmer.fromColors(
-                            baseColor: baseColor,
-                            highlightColor: highlightColor,
-                            child: Text(
-                              "                ",
-                              style: TextStyles.textStyleNormalDarkGreySemiBold(
-                                  fontSize: 14),
-                            ),
-                          ),
-                          Spacer(),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: <Widget>[
-                              Shimmer.fromColors(
-                                baseColor: baseColor,
-                                highlightColor: highlightColor,
-                                child: Text(
-                                  "\$ 000",
-                                  style: TextStyles.textStyleHardBold(fontSize: 16),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
+                        ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
-      );
-    });
+          );
+        });
   }
 }

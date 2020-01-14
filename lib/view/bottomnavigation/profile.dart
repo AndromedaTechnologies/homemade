@@ -27,7 +27,7 @@ class _ProfileViewState extends State<ProfileView> {
 
   List<ProfileData> profileDataList = [
     ProfileData(text: "Chef Settings", image: chefImage,),
-    ProfileData(text: "My Dishes", image: dinnerImage,),
+    ProfileData(text: "Add Dish", image: dinnerImage,),
     ProfileData(text: "My Profile", image: manUserImage,),
     ProfileData(text: "My Orders", image: shoppingImage,),
     ProfileData(text: "Settings", image: settingsImage,),

@@ -4,6 +4,7 @@ const String LOGIN_URL = API_URL + "login";
 const String REGISTER_URL = API_URL + "register";
 ///User
 const String USER_URL = API_URL + "user";
+const String USER_DATA_URL = API_URL + "user/data";
 
 ///Chef
 const String CHEF_URL = API_URL + "chef";
