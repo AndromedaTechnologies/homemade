@@ -92,13 +92,18 @@ class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
 
   File _professionalImage;
   File frontFileImage;
-  File backFileImage;
+
+//  File backFileImage;
 
   bool submitDataLoading = false;
   bool gettingDataLoading = false;
   bool showEditButton = true;
 
   bool showCuisineError = false;
+
+  ///Errors
+  String _professinalImageErrorMessage;
+  String _frontImageErrorMessage;
 
   @override
   void initState() {
@@ -750,6 +755,7 @@ class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
               _callBackFromProfessionalImage,
               imageURL: chefDetailModel?.chef?.businessImage,
               enable: widget.isUpdate ? !showEditButton : true,
+              errorMessage: _professinalImageErrorMessage,
             )),
 
         SizedBox(
@@ -821,9 +827,9 @@ class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
             Expanded(
               child: _govImage(frontFileImage, true),
             ),
-            Expanded(
-              child: _govImage(backFileImage, false),
-            ),
+//            Expanded(
+//              child: _govImage(backFileImage, false),
+//            ),
           ],
         )
       ],
@@ -953,6 +959,15 @@ class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
                     ),
                   ),
                 ),
+                _frontImageErrorMessage == null
+                    ? Container()
+                    : Padding(
+                        padding: EdgeInsets.only(top: 10),
+                        child: Text(
+                          _frontImageErrorMessage,
+                          style: TextStyles.textStyleError(),
+                        ),
+                      ),
                 SizedBox(
                   height: 10,
                 ),
@@ -964,10 +979,10 @@ class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
 
   Widget _frontText() {
     return Text(
-      "Write your CNIC# on paper and "
+      "Write your Security/Passport number on paper and "
       "take a picture next to your "
       "face so both your face and "
-      "CNIC# is clearly visible.",
+      "Security/Passport number is clearly visible.",
       textAlign: TextAlign.center,
       style: TextStyles.textStyleNormalGrey(),
     );
@@ -1085,6 +1100,9 @@ class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
         }
         break;
       case 1:
+        setState(() {
+          _professinalImageErrorMessage = null;
+        });
         if (!(cuisinesList.map((cuisine) => cuisine.selected).toList().length >
             0)) {
           setState(() {
@@ -1099,14 +1117,31 @@ class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
 
         if (_form2.currentState.validate()) {
           print(_professionalImage == null);
-          setState(() {
-            currentIndex++;
-          });
+
+          if (_professionalImage != null) {
+            setState(() {
+              currentIndex++;
+            });
+          } else {
+            setState(() {
+              _professinalImageErrorMessage = "Please Select Image";
+            });
+          }
         }
         break;
       case 2:
+        setState(() {
+          _frontImageErrorMessage = null;
+        });
+
         if (_form3.currentState.validate()) {
-          _submitToServerInsert();
+          if (frontFileImage != null)
+            _submitToServerInsert();
+          else {
+            setState(() {
+              _frontImageErrorMessage = "Please Select Image";
+            });
+          }
 
 //          setState(() {
 //            currentIndex++;
@@ -1114,9 +1149,9 @@ class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
         }
         break;
       case 3:
-        if (_form4.currentState.validate()) {
-          _submitToServerInsert();
-        }
+//        if (_form4.currentState.validate()) {
+//          _submitToServerInsert();
+//        }
         break;
     }
   }
@@ -1147,10 +1182,9 @@ class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
   _takeImage(bool condition) async {
     var image = await ImagePicker.pickImage(source: ImageSource.camera);
     if (image != null) {
-      if (condition)
-        frontFileImage = image;
-      else
-        backFileImage = image;
+      if (condition) frontFileImage = image;
+//      else
+//        backFileImage = image;
       setState(() {});
     }
   }
@@ -1219,12 +1253,12 @@ class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
             filename: path.basename(frontFileImage.path),
           )));
 
-      form.files.add(MapEntry(
-          "cnic_back",
-          MultipartFile.fromFileSync(
-            backFileImage.path,
-            filename: path.basename(backFileImage.path),
-          )));
+//      form.files.add(MapEntry(
+//          "cnic_back",
+//          MultipartFile.fromFileSync(
+//            backFileImage.path,
+//            filename: path.basename(backFileImage.path),
+//          )));
 
       Response response = await API(_scaffoldKey).post(
           url: CHEF_REGISTER_URL,
