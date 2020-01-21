@@ -145,6 +145,7 @@ class TextStyles {
         fontStyle: FontStyle.italic);
   }
 
+
   static TextStyle textStyleNormal({double fontSize = 16.0}) {
     return TextStyle(
       color: MColor.application,

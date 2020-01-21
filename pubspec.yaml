@@ -76,6 +76,13 @@ flutter:
    - assets/bottom/user.png
    - assets/bottom/leave.png
    - assets/bottom/notification.png
+   - assets/images/compass.png
+   - assets/images/compass_1.png
+   - assets/images/filter.png
+   - assets/images/house.png
+   - assets/images/map.png
+   - assets/images/menu.png
+   - assets/images/menu_1.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

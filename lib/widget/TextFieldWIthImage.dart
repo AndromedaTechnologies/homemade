@@ -86,7 +86,7 @@ class TextFieldWithImage extends StatelessWidget {
 //          ),
             errorStyle: TextStyles.textStyleError(),
 //            errorText: errorMessage,
-            labelText: label.toUpperCase(),
+            labelText: label?.toUpperCase(),
             labelStyle: TextStyles.textStyleBold(fontSize: 16, spacing: 4.0),
             hintText: hint,
 
