@@ -8,6 +8,7 @@ class MColor{
 
   static final Color white = Colors.white;
   static final Color application = Color(0xFF53714B);
+  static final Color applicationDark = Color(0xFF0C3900);
   static final Color lightGreyB6 = Color(0xFFB8B6B6);
   static final Color lightGreyEC = Color(0xFFECECEC);
   static final Color blueFacebook = Color(0xFF3B5998);

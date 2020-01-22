@@ -11,7 +11,7 @@ import 'package:homemade/stream/user/UserProvider.dart';
 import 'package:homemade/stream/user/UserProviderInstance.dart';
 import 'package:homemade/view/auth/login.dart';
 import 'package:homemade/view/chef//register_update.dart';
-import 'package:homemade/view/chef/dish.dart';
+import 'package:homemade/view/chef/add_update_dish.dart';
 import 'package:homemade/view/chef/myprofile.dart';
 import 'package:homemade/widget/ImageInitials.dart';
 import 'package:homemade/widget/RoundedBorderButton.dart';

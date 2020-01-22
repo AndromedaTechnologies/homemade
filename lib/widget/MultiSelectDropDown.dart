@@ -13,7 +13,7 @@ class MultiSelectDropDown extends StatefulWidget {
   final String label;
   final dynamic productList;
   final Function okayButton;
-
+  final double width;
   final bool hasError;
   final String errorText;
 
@@ -24,7 +24,7 @@ class MultiSelectDropDown extends StatefulWidget {
       this.productList,
       this.okayButton,
       this.hasError = false,
-      this.errorText = ""});
+      this.errorText = "", this.width});
 
   @override
   _MultiSelectDropDownState createState() => _MultiSelectDropDownState();
@@ -36,7 +36,7 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
     return Column(
       children: <Widget>[
         Container(
-          width: MySize.of(context).fitWidth(80),
+          width: widget.width?? MySize.of(context).fitWidth(80),
           decoration: BoxDecoration(
               border: Border(
                   bottom: BorderSide(color: MColor.lightGreyB6, width: 1))),
@@ -49,9 +49,10 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
                     color: MColor.lightGreyB6,
                   ),
                   iconSize: 24,
-                  elevation: 0,
+                  elevation: 20,
                   isExpanded: true,
                   underline: Container(),
+
                   onChanged: (widget.isUpdate ? !widget.showEditButton : true)
                       ? (_) {
 //                              List<String> split =
@@ -76,7 +77,7 @@ class _MultiSelectDropDownState extends State<MultiSelectDropDown> {
                 child: Container(
 //                      color:Colors.red,
                   padding: EdgeInsets.only(right: 18, top: 5),
-                  width: MySize.of(context).fitWidth(80),
+                  width:widget.width?? MySize.of(context).fitWidth(80),
                   child: Wrap(
                       spacing: 4,
                       children: selectedProducts().length > 0

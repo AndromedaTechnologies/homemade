@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:homemade/model/myprofile.dart';
 import 'package:homemade/res/color.dart';
+import 'package:homemade/res/globalClass.dart';
 import 'package:homemade/res/textStyle.dart';
 import 'package:homemade/stream/dish/event.dart';
 import 'package:homemade/stream/dish/stream.dart';
@@ -21,8 +22,8 @@ class MyProfileView extends StatefulWidget {
 }
 
 class _MyProfileState extends State<MyProfileView>
-    with SingleTickerProviderStateMixin {
-  final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
+    with SingleTickerProviderStateMixin{
+
   MyProfileStream stream;
 
   TabController _tabController;
@@ -34,16 +35,28 @@ class _MyProfileState extends State<MyProfileView>
       setState(() {});
     });
 
-    stream = MyProfileStream(scaffoldKey);
+    stream = MyProfileStream(Global.globalScaffoldKey);
     stream.dispatch(FetchData());
 
     super.initState();
   }
 
+//  @override
+//  void didChangeDependencies() {
+//    // TODO: implement didChangeDependencies
+//    super.didChangeDependencies();
+//    print("Did change dependency");
+//    stream.dispatch(FetchData());
+////    _getUserDat_PendingFeedback_CompletedTreatment();
+//  }
+
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        key: scaffoldKey,
+        key: Global.globalScaffoldKey,
         backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: MColor.application,

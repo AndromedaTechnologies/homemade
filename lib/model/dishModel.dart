@@ -50,7 +50,7 @@ class DishModel {
     if (json['ingredients'] != null) {
       ingredients = new List<String>();
       json['ingredients'].forEach((v) {
-        ingredients.add(v);
+        ingredients.add(v['ingredients']);
       });
     }else{
       ingredients = new List<String>();

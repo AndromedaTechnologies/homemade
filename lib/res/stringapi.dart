@@ -13,4 +13,6 @@ const String CHEF_UPDATE_URL = CHEF_URL + "/update";
 const String CHEF_UPDATE_IMAGE_URL = CHEF_URL + "/update/image";
 
 const String CHEF_DISH_URL = API_URL + "dish";
+const String CHEF_DISH_UPDATE = API_URL + "dish/update";
+const String CHEF_DISH_IMAGE_UPDATE = API_URL + "dish/update/image";
 const String CHEF_GET_DISHES_URL = API_URL + "dishes";

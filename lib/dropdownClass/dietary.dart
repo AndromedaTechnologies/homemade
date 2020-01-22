@@ -11,6 +11,6 @@ List<Dietary> dietaryList = [
   Dietary("Vegetarian",false),
   Dietary("Keto",false),
   Dietary("Gluten free",false),
-  Dietary(" Low calorie",false),
-  Dietary(" Low fat",false),
+  Dietary("Low calorie",false),
+  Dietary("Low fat",false),
 ];

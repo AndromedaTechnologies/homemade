@@ -15,7 +15,7 @@ class PopupTextField extends StatelessWidget {
   final List<String> dataList;
   final Function popDialog;
   final Function deleteFun;
-
+  final double width;
   final bool hasError;
   final String errorText;
 
@@ -28,7 +28,7 @@ class PopupTextField extends StatelessWidget {
       this.popDialog,
       this.deleteFun,
       this.hasError = false,
-      this.errorText = ""});
+      this.errorText = "", this.width});
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +41,7 @@ class PopupTextField extends StatelessWidget {
                 }
               : null,
           child: Container(
-            width: MySize.of(context).fitWidth(80),
+            width: width ??MySize.of(context).fitWidth(80),
             decoration: BoxDecoration(
                 border: Border(
                     bottom: BorderSide(color: MColor.lightGreyB6, width: 1))),
@@ -52,7 +52,7 @@ class PopupTextField extends StatelessWidget {
                   child: Container(
 //                      color:Colors.red,
                     padding: EdgeInsets.only(right: 18, top: 5),
-                    width: MySize.of(context).fitWidth(80),
+                    width: width?? MySize.of(context).fitWidth(80),
                     child: Wrap(
                         spacing: 4,
                         children: dataListWidget().length > 0

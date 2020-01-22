@@ -33,7 +33,7 @@ class _PageSelectionState extends State<PageSelection> {
     );
   }
 
-  Widget _body(){
+  Widget _body() {
     return navigationBars[0].selected
         ? MapView()
         : navigationBars[1].selected ? NotificationView() : ProfileView();

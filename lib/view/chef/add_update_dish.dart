@@ -8,6 +8,9 @@ import 'package:homemade/dropdownClass/dietary.dart';
 import 'package:homemade/dropdownClass/serving.dart';
 import 'package:homemade/dropdownClass/servingtime.dart';
 import 'package:homemade/dropdownClass/spice.dart';
+import 'package:homemade/error/snackbar.dart';
+import 'package:homemade/model/dishModel.dart';
+import 'package:homemade/model/imageModel.dart';
 import 'package:homemade/res/color.dart';
 import 'package:homemade/res/imagestring.dart';
 import 'package:homemade/res/size.dart';
@@ -27,14 +30,16 @@ import 'package:path/path.dart' as path;
 
 class DishAddUpdateView extends StatefulWidget {
   final bool isUpdate;
+  final DishModel dishModel;
 
-  DishAddUpdateView({this.isUpdate = false});
+  DishAddUpdateView({this.isUpdate = false, this.dishModel});
 
   @override
   _DishAddUpdateViewState createState() => _DishAddUpdateViewState();
 }
 
-class _DishAddUpdateViewState extends State<DishAddUpdateView> {
+class _DishAddUpdateViewState extends State<DishAddUpdateView>
+    with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   GlobalKey<FormState> _form1 = GlobalKey<FormState>();
   GlobalKey<FormState> _form2 = GlobalKey<FormState>();
@@ -55,16 +60,23 @@ class _DishAddUpdateViewState extends State<DishAddUpdateView> {
   String spice;
 
   bool submitDataLoading = false;
-  bool showEditButton = true;
+  bool showEditButton = false;
   bool dropDownError = false;
 
   List<String> dishIngredients = [];
-  List<File> dishImages = [];
+  List<File> dishImages = [null, null, null, null];
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+
+    _tabController = new TabController(length: 3, vsync: this);
+    _tabController.addListener(() {
+      setState(() {});
+//      _tabController.
+    });
+
     courseList.forEach((item) {
       item.selected = false;
     });
@@ -87,6 +99,8 @@ class _DishAddUpdateViewState extends State<DishAddUpdateView> {
     itemNameController = TextEditingController();
     priceController = TextEditingController();
     descriptionController = TextEditingController();
+
+    if (widget.isUpdate) _loadPreData();
   }
 
   @override
@@ -143,13 +157,13 @@ class _DishAddUpdateViewState extends State<DishAddUpdateView> {
 //            indicatorPadding: EdgeInsets.symmetric(horizontal: 10),
           tabs: [
             Tab(
-              text: "Business Profile",
+              text: "Information 1",
             ),
             Tab(
-              text: "Professional Profile",
+              text: "Information 2",
             ),
             Tab(
-              text: "Payment",
+              text: "Images",
             ),
           ]),
 //    titleSpacing: 1.2,
@@ -165,7 +179,52 @@ class _DishAddUpdateViewState extends State<DishAddUpdateView> {
   }
 
   Widget _updateUI() {
-    return Container();
+    return Column(
+      children: <Widget>[
+        SizedBox(
+          height: 5,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: <Widget>[
+            submitDataLoading
+                ? Center(
+                    child: Loading(),
+                  )
+                : RoundedBorderButton(
+                    boldText: false,
+                    width: MySize.of(context).fitWidth(26),
+                    text: "Save",
+                    borderRadius: 5,
+                    height: 35,
+                    onTap: _submitToServerUpdate,
+                  ),
+            SizedBox(
+              width: 10,
+            ),
+          ],
+        ),
+        SizedBox(
+          height: 15,
+        ),
+        Expanded(
+          child: Padding(
+            padding: EdgeInsets.all(20),
+            child: TabBarView(controller: _tabController, children: [
+              SingleChildScrollView(
+                child: _disInformation_1(),
+              ),
+              SingleChildScrollView(
+                child: _disInformation_2(),
+              ),
+              SingleChildScrollView(
+                child: _dishImages(),
+              ),
+            ]),
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _registerUI() {
@@ -277,7 +336,6 @@ class _DishAddUpdateViewState extends State<DishAddUpdateView> {
 //            FocusScope.of(context).requestFocus();
             setState(() {});
           },
-          width: MySize.of(context).fitWidth(80),
           obscureText: false,
           textInputType: TextInputType.text,
           action: TextInputAction.next,
@@ -304,7 +362,6 @@ class _DishAddUpdateViewState extends State<DishAddUpdateView> {
 //            FocusScope.of(context).requestFocus();
             setState(() {});
           },
-          width: MySize.of(context).fitWidth(80),
           obscureText: false,
           textInputType: TextInputType.number,
           action: TextInputAction.next,
@@ -349,10 +406,10 @@ class _DishAddUpdateViewState extends State<DishAddUpdateView> {
         ),
         CustomDropDown(
           hintText: "Dietary Info",
-          selectedValue: dietaryInfo,
+          selectedValue: dietaryInfo.trim(),
           hasError: dropDownError && dietaryInfo == null,
           errorText: "Please Select Dietry Info",
-          listData: dietaryList.map((item) => item.text).toList(),
+          listData: dietaryList.map((item) => item.text.trim()).toList(),
           onChangeFun: (val) {
             setState(() {
               dietaryInfo =
@@ -397,7 +454,6 @@ class _DishAddUpdateViewState extends State<DishAddUpdateView> {
 //            FocusScope.of(context).requestFocus();
             setState(() {});
           },
-          width: MySize.of(context).fitWidth(80),
           obscureText: false,
           textInputType: TextInputType.text,
           action: TextInputAction.next,
@@ -446,11 +502,13 @@ class _DishAddUpdateViewState extends State<DishAddUpdateView> {
         ),
         MultiSelectDropDown(
           label: "Serving time",
+          width: double.maxFinite,
           isUpdate: widget.isUpdate,
           showEditButton: showEditButton,
           productList: servingTimeList,
           hasError: dropDownError &&
-              servingTimeList.where((serv) => serv.selected).toList().length == 0,
+              servingTimeList.where((serv) => serv.selected).toList().length ==
+                  0,
           errorText: "Please Select Serving Time",
           okayButton: () {
             Navigator.of(context).pop();
@@ -461,6 +519,7 @@ class _DishAddUpdateViewState extends State<DishAddUpdateView> {
           height: 20,
         ),
         PopupTextField(
+          width: double.maxFinite,
           showEditButton: showEditButton,
           isUpdate: widget.isUpdate,
           hasError: dropDownError && dishIngredients.length == 0,
@@ -488,7 +547,7 @@ class _DishAddUpdateViewState extends State<DishAddUpdateView> {
           height: 20,
         ),
         Text(
-          "Add image of your Dish to attrat Foodies. Images gives better idea of your dish.",
+          "${widget.isUpdate ? "Update" : "Add"} image of your Dish to attrat Foodies. Images gives better idea of your dish.",
           textAlign: TextAlign.center,
           style: TextStyles.textStyleNormalGrey(fontSize: 14),
         ),
@@ -504,26 +563,57 @@ class _DishAddUpdateViewState extends State<DishAddUpdateView> {
     return Wrap(
       spacing: 10,
       runSpacing: 10,
-      children: dishImages.map((file) => _dishImage(file)).toList()
-        ..add(_dishAddImage()),
+      alignment: WrapAlignment.center,
+      children: widget.isUpdate
+          ? widget.dishModel.dishimages
+              .map((image) => _dishImageUpdate(image))
+              .toList()
+          : dishImages.map((file) => _dishImage(file)).toList(),
     );
+  }
+
+  Widget _dishImageUpdate(DishImageModel imageModel) {
+    return imageModel?.image == null
+        ? Container(
+            child: Center(child: Loading()),
+            width: 120,
+            height: 100,
+          )
+        : InkWell(
+            onTap: () {
+              _updateImage(imageModel);
+            },
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: FadeInImage(
+                  placeholder: MemoryImage(kTransparentImage),
+                  fit: BoxFit.cover,
+                  width: 120,
+                  height: 100,
+                  image: NetworkImage(imageModel.image)),
+            ),
+          );
   }
 
   Widget _dishImage(File file) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(20),
-      child: FadeInImage(
-          placeholder: MemoryImage(kTransparentImage),
-          fit: BoxFit.cover,
-          width: 120,
-          height: 100,
-          image: FileImage(file)),
-    );
+    return file == null
+        ? _dishAddImage(dishImages.indexOf(file))
+        : ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: FadeInImage(
+                placeholder: MemoryImage(kTransparentImage),
+                fit: BoxFit.cover,
+                width: 120,
+                height: 100,
+                image: FileImage(file)),
+          );
   }
 
-  Widget _dishAddImage() {
+  Widget _dishAddImage(int index) {
     return InkWell(
-      onTap: _addDishImage,
+      onTap: () {
+        _addDishImage(index);
+      },
       child: Container(
         width: 120,
         height: 100,
@@ -693,14 +783,35 @@ class _DishAddUpdateViewState extends State<DishAddUpdateView> {
     setState(() {});
   }
 
-  _addDishImage() async {
+  _addDishImage(int index) async {
     var image = await ImagePicker.pickImage(
       source: ImageSource.gallery,
     );
     if (image != null) {
-      dishImages.add(image);
+      dishImages[index] = image;
       setState(() {});
     }
+  }
+
+  _loadPreData() {
+    itemNameController.text = widget.dishModel.name;
+    priceController.text = widget.dishModel.price;
+    descriptionController.text = widget.dishModel.description;
+    servingSize = widget.dishModel.servingSize;
+    cuisineType = widget.dishModel.cuisineType;
+    dietaryInfo = widget.dishModel.dietaryInformation;
+    courseType = widget.dishModel.courseType;
+//    spice = widget.dishModel.
+
+    dishIngredients = widget.dishModel.ingredients;
+    widget.dishModel.servingtime.forEach((time) {
+      try {
+        servingTimeList
+            .where((servTime) => servTime.text == time)
+            .first
+            .selected = true;
+      } catch (e) {}
+    });
   }
 
   ///Server
@@ -741,11 +852,96 @@ class _DishAddUpdateViewState extends State<DishAddUpdateView> {
       Response response = await API(_scaffoldKey).post(
           url: CHEF_DISH_URL, body: form, contentType: "multipart/form-data");
 
-
-      if (response.statusCode == 200) {
+      if (response != null) {
         String message = response.data['message'];
         Navigator.of(context).pop(message ?? "success");
-      }else{
+      } else {
+        throw Exception();
+      }
+    } catch (e) {
+      setState(() {
+        submitDataLoading = false;
+      });
+      print(e);
+    }
+  }
+
+  _updateImage(DishImageModel imageModel) async {
+    var image = await ImagePicker.pickImage(
+      source: ImageSource.gallery,
+    );
+    if (image != null) {
+      _updateImageServer(imageModel, image);
+    }
+  }
+
+  _updateImageServer(DishImageModel imageModel, File image) async {
+    try {
+      String preImageUrl = imageModel.image;
+      setState(() {
+        imageModel.image = null;
+      });
+
+      FormData form = FormData.fromMap({"id": imageModel.id});
+      form.files.add(MapEntry(
+          "dishimages",
+          MultipartFile.fromFileSync(
+            image.path,
+            filename: path.basename(image.path),
+          )));
+
+      Response response = await API(_scaffoldKey).post(
+          url: CHEF_DISH_IMAGE_UPDATE,
+          body: form,
+          contentType: "multipart/form-data");
+
+      if (response != null) {
+        setState(() {
+          imageModel.image = response.data['dish'];
+        });
+      } else {
+        setState(() {
+          imageModel.image = preImageUrl;
+        });
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  _submitToServerUpdate() async {
+    try {
+      FocusScope.of(context).requestFocus(FocusNode());
+      setState(() {
+        submitDataLoading = true;
+      });
+
+      Map form = {
+        "id": widget.dishModel.id,
+        "name": itemNameController.text,
+        "price": priceController.text,
+        "serving_size": servingSize,
+        "cuisine_type": cuisineType,
+        "dietary_information": dietaryInfo,
+        "course_type": courseType,
+        "description": descriptionController.text,
+        "servingtime": servingTimeList.map((serving) => serving.text).toList(),
+        "ingredients": dishIngredients.map((ingredient) => ingredient).toList()
+      };
+
+      Response response = await API(_scaffoldKey).put(
+          url: CHEF_DISH_UPDATE,
+          body: form,
+          contentType: "application/x-www-form-urlencoded");
+
+      if (response != null) {
+//        DishModel responseModel = DishModel.fromJson(response.data);
+//        print(responseModel.name);
+
+
+        Navigator.of(context).pop();
+        Navigator.of(context).pop("yes");
+      } else {
         throw Exception();
       }
     } catch (e) {

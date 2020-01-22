@@ -64,25 +64,25 @@ class _ReviewsViewState extends State<ReviewsView> {
               ),
             ],
           ),
-          Padding(
-            padding: const EdgeInsets.only(right: 12.0),
-            child: Column(
-              children: <Widget>[
-                SizedBox(
-                  height: 20,
-                ),
-                _ratingRow("Seller communication"),
-                SizedBox(
-                  height: 15,
-                ),
-                _ratingRow("Service as described"),
-                SizedBox(
-                  height: 15,
-                ),
-                _ratingRow("Would recommend"),
-              ],
-            ),
-          ),
+//          Padding(
+//            padding: const EdgeInsets.only(right: 12.0),
+//            child: Column(
+//              children: <Widget>[
+//                SizedBox(
+//                  height: 20,
+//                ),
+//                _ratingRow("Seller communication"),
+//                SizedBox(
+//                  height: 15,
+//                ),
+//                _ratingRow("Service as described"),
+//                SizedBox(
+//                  height: 15,
+//                ),
+//                _ratingRow("Would recommend"),
+//              ],
+//            ),
+//          ),
           SizedBox(
             height: 20,
           ),
