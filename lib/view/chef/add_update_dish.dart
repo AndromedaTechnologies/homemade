@@ -406,7 +406,7 @@ class _DishAddUpdateViewState extends State<DishAddUpdateView>
         ),
         CustomDropDown(
           hintText: "Dietary Info",
-          selectedValue: dietaryInfo.trim(),
+          selectedValue: dietaryInfo?.trim(),
           hasError: dropDownError && dietaryInfo == null,
           errorText: "Please Select Dietry Info",
           listData: dietaryList.map((item) => item.text.trim()).toList(),
