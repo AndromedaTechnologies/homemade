@@ -41,5 +41,64 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+
+
+
+
+	<key>CFBundleURLTypes</key>
+    	<array>
+    		<dict>
+    			<key>CFBundleURLSchemes</key>
+    			<array>
+    				<string>fb</string>
+    			</array>
+    		</dict>
+    		<dict>
+    			<key>CFBundleTypeRole</key>
+    			<string>Editor</string>
+    			<key>CFBundleURLName</key>
+    			<string>3ds.stripesdk.io</string>
+    			<key>CFBundleURLSchemes</key>
+    			<array>
+    				<string>stripesdk</string>
+    			</array>
+    		</dict>
+    	</array>
+
+	<key>FacebookAppID</key>
+    	<string></string>
+    	<key>FacebookDisplayName</key>
+    	<string>Home Made</string>
+    	<key>LSApplicationQueriesSchemes</key>
+    	<array>
+    		<string>fbapi</string>
+    		<string>fb-messenger-share-api</string>
+    		<string>fbauth2</string>
+    		<string>fbshareextension</string>
+    	</array>
+    <key>NSCameraUsageDescription</key>
+    	<string>Using Camera to read QR Code and Card Scan</string>
+    	<key>NSContactsUsageDescription</key>
+    	<string>Read Contact to send invitations</string>
+    	<key>NSPhotoLibraryUsageDescription</key>
+    	<string>Take Images from the Gallery</string>
+    	<key>UIBackgroundModes</key>
+    	<array>
+    		<string>fetch</string>
+    		<string>remote-notification</string>
+    	</array>
+
+
+<key>NSLocationAlwaysUsageDescription</key>
+<string>This app needs access to location when in the background.</string>
+<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+<string>This app needs access to location when open and in the background.</string>
+<key>NSLocationWhenInUseUsageDescription</key>
+<string>This app needs access to location when open.</string>
+
+	<key>NSCalendarsUsageDescription</key>
+	<string>Home Made want to use Calendar</string>
+<key>io.flutter.embedded_views_preview</key>
+	<true/>
 </dict>
 </plist>
