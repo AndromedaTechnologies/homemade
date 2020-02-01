@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:homemade/error/snackbar.dart';
 import 'package:homemade/model/chefDetailModel.dart';
 import 'package:homemade/res/color.dart';
@@ -15,6 +17,7 @@ import 'package:homemade/stream/user/UserProvider.dart';
 import 'package:homemade/stream/user/UserProviderInstance.dart';
 import 'package:homemade/stream/user/notifier.dart';
 import 'package:homemade/dropdownClass/cuisine.dart';
+import 'package:homemade/view/chef/select_location.dart';
 import 'package:homemade/widget/AppBarCustom.dart';
 import 'package:homemade/widget/ImageSelect.dart';
 import 'package:homemade/widget/MultSelectDropDownItem.dart';
@@ -28,6 +31,7 @@ import 'package:homemade/widget/TextFieldWIthImage.dart';
 import 'package:homemade/widget/errorMessage.dart';
 import 'package:homemade/widget/loading.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:path/path.dart' as path;
@@ -105,6 +109,8 @@ class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
   String _professinalImageErrorMessage;
   String _frontImageErrorMessage;
 
+  Placemark placemark;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -162,7 +168,8 @@ class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
         ibanController.text = chefDetailModel.chef.iban;
         bankNameController.text = chefDetailModel.chef.bankName;
         experienceController.text = chefDetailModel.chef.experience;
-        pickUpLocationController.text = chefDetailModel.chef.pickupLocation;
+        pickUpLocationController.text =
+            chefDetailModel.chef.pickupLocation.name;
         awardAndCertifications.addAll(
             chefDetailModel.awards.map((award) => award.award).toList());
 //        cuisinesList.addAll(chefDetailModel.cuisines.map((cuisine)=>Cuisine()).toList());
@@ -681,9 +688,9 @@ class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
           controller: pickUpLocationController,
           errorMessage: "Please Provide Location",
           onValidate: (val) {
-//            if (Condition.nonEmptyCondition(val)) {
-//              return "Provide Business Name";
-//            }
+            if (Condition.nonEmptyCondition(val)) {
+              return "Provide Business Name";
+            }
             return null;
           },
           label: "Location",
@@ -1190,8 +1197,30 @@ class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
   }
 
   _navigateToMap() {
-    CustomSnackBar.SnackBar_3Error(_scaffoldKey,
-        leadingIcon: Icons.warning, title: "Comming Soon!");
+//    CustomSnackBar.SnackBar_3Error(_scaffoldKey,
+//        leadingIcon: Icons.warning, title: "Comming Soon!");
+
+    Navigator.of(context)
+        .push(PageTransition(
+            child: SelectLocationGoogleMaps(isUpdate: widget.isUpdate,location: chefDetailModel?.chef?.pickupLocation,),
+            type: PageTransitionType.rightToLeftWithFade))
+        .then((location) {
+      if (location != null) {
+        if (location is Placemark) {
+          print(location.name);
+          print(location.locality);
+          print(location.administrativeArea);
+          print(location.subLocality);
+          print(location.subAdministrativeArea);
+          print(location.thoroughfare);
+          print(location.subThoroughfare);
+          pickUpLocationController.text =
+              location.name + " " + location.subLocality;
+          placemark = location;
+          setState(() {});
+        }
+      }
+    });
   }
 
   _editSaveButton() {
@@ -1222,9 +1251,11 @@ class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
         "state": businessStateController.text,
         "postal_code": businessPostalCodeController.text,
         "chef_description": chefDescriptionController.text,
-        "pickup_location": "Pakistan",
-        "latitude": "73.2407907",
-        "longitude": "73.2407907",
+        "pickup_location": jsonEncode({
+          "name": pickUpLocationController.text,
+          "latitude": placemark.position.latitude,
+          "longitude": placemark.position.longitude
+        }),
         "business_address": businessAddressController.text,
         "cnic": governmentIDCNICController.text,
         "iban": ibanController.text,
@@ -1305,9 +1336,13 @@ class _ChefRegisterUpdateViewState extends State<ChefRegisterUpdateView>
         "state": businessStateController.text,
         "postal_code": businessPostalCodeController.text,
         "chef_description": chefDescriptionController.text,
-        "pickup_location": "Pakistan",
-        "latitude": "73.2407907",
-        "longitude": "73.2407907",
+        "pickup_location": jsonEncode({
+          "name": pickUpLocationController.text,
+          "latitude": placemark?.position?.latitude ??
+              chefDetailModel.chef.pickupLocation.latitude,
+          "longitude": placemark?.position?.longitude ??
+              chefDetailModel.chef.pickupLocation.longitude
+        }),
         "business_address": businessAddressController.text,
         "cnic": governmentIDCNICController.text,
         "iban": ibanController.text,

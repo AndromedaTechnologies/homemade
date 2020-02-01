@@ -41,7 +41,6 @@ class _MapViewState extends State<MapView> {
           onMapCreated: (GoogleMapController controller) {
             _controller.complete(controller);
           },
-          myLocationEnabled: true,
           rotateGesturesEnabled: true,
           markers: _createMarker(),
           onCameraMove: (CameraPosition position) {

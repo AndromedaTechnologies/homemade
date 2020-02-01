@@ -248,7 +248,7 @@ class _RegisterViewState extends State<RegisterView> {
                 errorMessage != "" ? ErrorMessage(errorMessage) : Container(),
 
                 SizedBox(
-                  height: MySize.of(context).fitHeight(6),
+                  height: MySize.of(context).fitHeight(4),
                 ),
 
                 submit
@@ -261,7 +261,7 @@ class _RegisterViewState extends State<RegisterView> {
                   onTap: _validateForm,
                 ),
                 SizedBox(
-                  height: 20,
+                  height: 25,
                 ),
                 InkWell(
                   onTap: () {

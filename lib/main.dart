@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:homemade/model/loginModel.dart';
+import 'package:homemade/stream/location/permission.dart';
 import 'package:homemade/view/landing/splash.dart';
 import 'package:homemade/view/landing/walkthrought.dart';
 import 'package:homemade/view/wrapper.dart';
@@ -26,7 +27,8 @@ class _MyAppState extends State<MyApp> {
     // TODO: implement initState
     super.initState();
 
-    Future.delayed(const Duration(seconds: 5), () {
+    Future.delayed(const Duration(seconds: 5), () async {
+      await LocationPermission().getLocationPermission();
       _checkLoginUser();
     });
   }

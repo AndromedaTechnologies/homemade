@@ -3,12 +3,14 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:homemade/error/debugerror.dart';
 import 'package:homemade/error/snackbar.dart';
+import 'package:homemade/model/Facebook_User.dart';
 import 'package:homemade/res/color.dart';
 import 'package:homemade/res/imagestring.dart';
 import 'package:homemade/res/size.dart';
 import 'package:homemade/res/stringapi.dart';
 import 'package:homemade/res/textStyle.dart';
 import 'package:homemade/server/GeneralAPI.dart';
+import 'package:homemade/server/facebook.dart';
 import 'package:homemade/view/auth/register.dart';
 import 'package:homemade/widget/RoundedBorderButton.dart';
 import 'package:homemade/widget/TextFieldWIthImage.dart';
@@ -39,6 +41,7 @@ class _LoginViewState extends State<LoginView> {
   bool submit = false;
 
   String errorMessage = "";
+  FacebookAuth facebookAuth = FacebookAuth();
 
 
   @override
@@ -151,7 +154,7 @@ class _LoginViewState extends State<LoginView> {
                   imagePath: logoImage,
                 ),
                 SizedBox(
-                  height: MySize.of(context).fitHeight(12),
+                  height: MySize.of(context).fitHeight(5),
                 ),
                 submit
                     ? Center(
@@ -161,13 +164,24 @@ class _LoginViewState extends State<LoginView> {
                         text: "Log in",
 //                width: M,
                         onTap: _validateForm,
+                      ),SizedBox(
+                  height: MySize.of(context).fitHeight(5),
+                ),
+                submit
+                    ? Center(
+                        child: Loading(),
+                      )
+                    : RoundedBorderButton(
+                        text: "Log in with Facebook",height: 40,
+//                width: M,
+                        onTap: _facebookLogin,
                       ),
                 SizedBox(
                   height: 10,
                 ),
                 errorMessage != "" ? ErrorMessage(errorMessage) : Container(),
                 SizedBox(
-                  height: 10,
+                  height: 25,
                 ),
                 InkWell(
                   onTap: () {
@@ -214,6 +228,26 @@ class _LoginViewState extends State<LoginView> {
     }
   }
 
+  _facebookLogin(){
+    facebookAuth.signInWithFaceBook(
+        scaffoldKey: _scaffoldKey,
+        loginSuccessful: (Facebook facebookuser) {
+          Base64Codec BASE64 = Base64Codec();
+          Latin1Codec LATIN1 = Latin1Codec();
+
+          var bytesInLatin1 =
+          LATIN1.encode(facebookuser.id);
+
+          String password =
+          BASE64.encode(bytesInLatin1);
+
+          String email = facebookuser.email
+              .replaceAll('\u0040', '@')
+              .replaceAll('\\u0040', '@');
+
+          CustomSnackBar.SnackBar_3Success(_scaffoldKey,title: "Facebook Success, Coming Soon",leadingIcon: Icons.warning);
+        });
+  }
 
   ///Server Call
   _LoginUser() async {
