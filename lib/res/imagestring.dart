@@ -8,6 +8,7 @@ final String dinnerImage = "assets/input/dinner.png";
 final String heartImage = "assets/input/heart.png";
 final String heartBorderImage = "assets/input/heart_border.png";
 final String locationImage = "assets/input/location.png";
+final String locationImageSmall = "assets/images/location.png";
 final String logoutImage = "assets/input/logout.png";
 final String manUserImage = "assets/input/man_user.png";
 final String settingsImage = "assets/input/settings.png";

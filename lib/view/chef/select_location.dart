@@ -76,7 +76,7 @@ class _SelectLocationGoogleMapsState extends State<SelectLocationGoogleMaps> {
       setState(() {});
     });
 
-    Future.delayed(Duration.zero, getCurrentLocationData);
+    Future.delayed(Duration.zero, getDefaultLocationData);
 
 //    _controller.
   }
@@ -374,7 +374,7 @@ class _SelectLocationGoogleMapsState extends State<SelectLocationGoogleMaps> {
     Navigator.of(context).pop(placemark.length > 0 ? placemark[0] : null);
   }
 
-  getCurrentLocationData() async {
+  getDefaultLocationData() async {
     print(
         "----------- Geolocator lat ${cameraPosition.target.latitude} long ${cameraPosition.target.longitude}------");
     List<Placemark> placeMark =
@@ -402,14 +402,16 @@ class _SelectLocationGoogleMapsState extends State<SelectLocationGoogleMaps> {
     _controller.future.then((mapController) {
       mapController.animateCamera(cameraUpdate);
     });
+
+
   }
 
   _getPlaceCordinates(String placeId) async {
     PlacesDetailsResponse details = await _places.getDetailsByPlaceId(placeId);
     if (details.isOkay) {
-      print(details.result);
-      print(
-          "${details.result.geometry.location.lat} ${details.result.geometry.location.lng} ");
+//      print(details.result);
+//      print(
+//          "${details.result.geometry.location.lat} ${details.result.geometry.location.lng} ");
 
       _moveCamera(details.result.geometry.location.lat,
           details.result.geometry.location.lng);

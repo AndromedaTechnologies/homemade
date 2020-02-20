@@ -9,6 +9,7 @@ import 'package:homemade/res/imagestring.dart';
 import 'package:homemade/res/textStyle.dart';
 import 'package:homemade/stream/myprofile/state.dart';
 import 'package:homemade/view/chef/viewdish.dart';
+import 'package:homemade/widget/DishItem.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
@@ -33,9 +34,28 @@ class _MyDishesViewState extends State<MyDishesView> {
           itemCount:
               profileState?.myProfileModel?.user?.chef?.dishes?.length ?? 0,
           itemBuilder: (context, index) {
-            return dishWidget(
-                profileState.myProfileModel.user.chef.dishes[index],
-                profileState.myProfileModel.user);
+            return DishItem(
+              dish: profileState.myProfileModel.user.chef.dishes[index],
+//              userModel: profileState.myProfileModel.user,
+              onTap: () {
+                Navigator.of(context)
+                    .push(PageTransition(
+                        child: DishDetailView(
+                          dishModel: profileState
+                              .myProfileModel.user.chef.dishes[index],
+                          userModel: profileState.myProfileModel.user,
+                        ),
+                        type: PageTransitionType.downToUp))
+                    .then((response) {
+                  print("DishDetailView Response $response");
+                  if (response != null) {
+                    CustomSnackBar.SnackBar_3Success(Global.globalScaffoldKey,
+                        leadingIcon: Icons.check,
+                        title: "Dish Updated Successfully");
+                  }
+                });
+              },
+            );
           });
     }
   }
@@ -53,7 +73,6 @@ class _MyDishesViewState extends State<MyDishesView> {
             .then((response) {
           print("DishDetailView Response $response");
           if (response != null) {
-
             CustomSnackBar.SnackBar_3Success(Global.globalScaffoldKey,
                 leadingIcon: Icons.check, title: "Dish Updated Successfully");
           }
